@@ -206,3 +206,6 @@ bindsym Print exec --no-startup-id gscreenshot -sc
 
 # set xrandr screen setting
 exec --no-startup-id XRANDR_SCREEN_SETTING_COMMAND
+
+# turn on redshift
+exec --no-startup-id redshift 

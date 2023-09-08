@@ -69,3 +69,10 @@ set-picom:
 	@mkdir -p $${HOME}/.config/picom
 	@ln -sv $${PWD}/dotfiles/picom/picom.conf $${HOME}/.config/picom/picom.conf || true
 	@echo "Complete setting picom!"
+
+.PHONY: set-redshift
+set-redshift:
+	@echo "Setting up redshift..."
+	@mkdir -p $${HOME}/.config/redshift
+	@ln -sv $${PWD}/dotfiles/redshift/redshift.conf $${HOME}/.config/redshift.conf || true
+	@echo "Complete setting redshift!"
