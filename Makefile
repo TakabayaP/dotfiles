@@ -88,3 +88,10 @@ set-redshift:
 	@mkdir -p $${HOME}/.config/redshift
 	@$(LINK_FILE) $${PWD}/dotfiles/redshift/redshift.conf $${HOME}/.config/redshift.conf || true
 	@echo "Complete setting redshift!"
+
+.PHONY: set-dunst
+set-dunst:
+	@echo "Setting up dunst..."
+	@mkdir -p $${HOME}/.config/dunst
+	@$(LINK_FILE) $${PWD}/dotfiles/dunst/dunstrc $${HOME}/.config/dunst/dunstrc || true
+	@echo "Complete setting dunst!"
