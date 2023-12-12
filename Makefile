@@ -56,10 +56,11 @@ set-alacritty:
 	@echo "Complete setting alacritty!"
 
 .PHONY: set-git
-	set-git:
+set-git:
 	@echo "Setting up git..."
-	@set -a && source $${PWD}/secrets.env && set +a \
-	&& sed -e 's/SECRET_GIT_NAME/'$${GIT_NAME}'/g' -e 's/SECRET_GIT_EMAIL/'$${GIT_EMAIL}'/g' dotfiles/git/.gitconfig > dotfiles/git/.gitconfig.tmp 
+	@read -p 'Enter git name: ' gitname; \
+	read -p 'Enter git email: ' gitemail; \
+	sed -e 's/SECRET_GIT_NAME/'$${gitname}'/g' -e 's/SECRET_GIT_EMAIL/'$${gitemail}'/g' dotfiles/git/.gitconfig > dotfiles/git/.gitconfig.tmp 
 	@$(LINK_FILE) $${PWD}/dotfiles/git/.gitconfig.tmp $${HOME}/.gitconfig || true
 	@echo "Complete setting git!"
 
