@@ -49,7 +49,7 @@ set-alacritty:
 	@echo "Setting up alacritty..."
 	@mkdir -p $${HOME}/.config/alacritty
 	# true is used to ignore error if the file already exists
-	@$(LINK_FILE) $${PWD}/dotfiles/alacritty/alacritty.yml $${HOME}/.config/alacritty/alacritty.yml || true
+	@$(LINK_FILE) $${PWD}/dotfiles/alacritty/alacritty.toml $${HOME}/.config/alacritty/alacritty.toml || true
 	@echo "Installing alacritty theme..."
 	@mkdir -p $${HOME}/.config/alacritty/themes
 	@git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes

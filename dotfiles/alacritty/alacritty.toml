@@ -1,0 +1,4 @@
+import = ["/home/takabaya/.config/alacritty/themes/themes/alabaster_dark.toml"]
+
+[font]
+size = 10.5
