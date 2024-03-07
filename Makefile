@@ -51,6 +51,7 @@ set-alacritty:
 	# true is used to ignore error if the file already exists
 	@$(LINK_FILE) $${PWD}/dotfiles/alacritty/alacritty.toml $${HOME}/.config/alacritty/alacritty.toml || true
 	@echo "Installing alacritty theme..."
+	@rm -rf $${HOME}/.config/alacritty/themes
 	@mkdir -p $${HOME}/.config/alacritty/themes
 	@git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 	@echo "Complete setting alacritty!"
