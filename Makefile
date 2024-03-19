@@ -97,3 +97,24 @@ set-dunst:
 	@mkdir -p $${HOME}/.config/dunst
 	@$(LINK_FILE) $${PWD}/dotfiles/dunst/dunstrc $${HOME}/.config/dunst/dunstrc || true
 	@echo "Complete setting dunst!"
+
+.PHONY: set-yabai
+set-yabai:
+	@echo "Setting up yabai..."
+	@mkdir -p $${HOME}/.config/yabairc
+	@$(LINK_FILE) $${PWD}/dotfiles/yabai/yabairc $${HOME}/.config/yabai/yabairc || true
+	@echo "Complete setting yabai!"
+
+.PHONY: set-skhd
+set-skhd:
+	@echo "Setting up skhd..."
+	@mkdir -p $${HOME}/.config/skhdrc
+	@$(LINK_FILE) $${PWD}/dotfiles/skhd/skhdrc $${HOME}/.config/skhd/skhdrc || true
+	@echo "Complete setting skhd!"
+
+.PHONY: set-kitty
+set-kitty:
+	@echo "Setting up kitty..."
+	@mkdir -p $${HOME}/.config/kitty
+	@$(LINK_FILE) $${PWD}/dotfiles/kitty/kitty.conf $${HOME}/.config/kitty/kitty.conf || true
+	@echo "Complete setting kitty!"
