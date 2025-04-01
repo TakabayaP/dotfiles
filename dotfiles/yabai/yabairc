@@ -27,9 +27,14 @@ yabai -m space 8 --label 8
 yabai -m space 9 --label 9
 yabai -m space 10 --label 10
 
-yabai -m rule --add title='Settings$' manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^System Information$" manage=off
-yabai -m rule --add title="^Preferences$" manage=off
-yabai -m rule --add title="^Digital Colour Meter$" manage=off
-yabai -m rule --add title="^General.*" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^zoom\.us$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Finder$" title="^Connect to Server$" manage=off
+yabai -m rule --add app="^Finder$" title="^Connecting to Server$" manage=off
+yabai -m rule --add app="^Finder$" title="^.* Info$" manage=off
+yabai -m rule --add app="^Finder$" title="^Copy$" manage=off
+yabai -m rule --add app="^Weather$" manage=off
+yabai -m rule --add app="^Clock$" manage=off
+yabai -m rule --add app="^Discord$" title="^Discord Updater$" manage=off
+yabai -m rule --add app="^Archive Utility$" manage=off
