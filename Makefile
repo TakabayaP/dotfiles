@@ -5,13 +5,17 @@
 LINK_FILE=ln -sv
 
 .PHONY: all
-all: set-nvim set-fish set-bashrc set-alacritty set-git
+ifeq ($(UNAME_S), Darwin)
+all: set-nvim set-fish set-bashrc set-alacritty set-git set-aerospace
+else
+all: set-nvim set-fish set-bashrc set-alacritty set-git set-i3 set-picom set-redshift set-dunst 
+endif
 
 .PHONY: force-all
 force-all: 
 	@echo "Force setting up all..."
 	$(LINK_FILE)='ln -sfv'
-	set-nvim set-fish set-bashrc set-alacritty set-git
+	all	
 
 .PHONY: install-yay
 install-yay:
