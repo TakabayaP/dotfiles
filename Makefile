@@ -38,6 +38,7 @@ set-fish:
 set-nvim:
 	@echo "Setting up nvim..."
 	@mkdir -p $${HOME}/.config/nvim
+	@mkdir -p $${HOME}/.nvim/tmp
 	# true is used to ignore error if the file already exists
 	@$(LINK_FILE) $${PWD}/dotfiles/nvim/init.vim $${HOME}/.config/nvim/init.vim || true
 	@echo "Complete setting nvim!"
