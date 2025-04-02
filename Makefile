@@ -97,3 +97,16 @@ set-dunst:
 	@mkdir -p $${HOME}/.config/dunst
 	@$(LINK_FILE) $${PWD}/dotfiles/dunst/dunstrc $${HOME}/.config/dunst/dunstrc || true
 	@echo "Complete setting dunst!"
+
+.PHONY: set-aerospace
+ifeq ($(UNAME_S), Darwin)
+set-aerospace:
+	@echo "Setting up aerospace..."
+	@echo "You are not using macOS"
+else
+set-aerospace:
+	@echo "Setting up aerospace..."
+	@mkdir -p $${HOME}/.config/aerospace
+	@$(LINK_FILE) $${PWD}/dotfiles/aerospace/aerospace.toml $${HOME}/.config/aerospace/aerospace.toml || true
+	@echo "Complete setting aerospace!"
+endif
