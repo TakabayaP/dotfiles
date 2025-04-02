@@ -5,13 +5,17 @@
 LINK_FILE=ln -sv
 
 .PHONY: all
-all: set-nvim set-fish set-bashrc set-alacritty set-git
+ifeq ($(UNAME_S), Darwin)
+all: set-nvim set-fish set-bashrc set-alacritty set-git set-aerospace
+else
+all: set-nvim set-fish set-bashrc set-alacritty set-git set-i3 set-picom set-redshift set-dunst 
+endif
 
 .PHONY: force-all
 force-all: 
 	@echo "Force setting up all..."
 	$(LINK_FILE)='ln -sfv'
-	set-nvim set-fish set-bashrc set-alacritty set-git
+	all	
 
 .PHONY: install-yay
 install-yay:
@@ -97,3 +101,16 @@ set-dunst:
 	@mkdir -p $${HOME}/.config/dunst
 	@$(LINK_FILE) $${PWD}/dotfiles/dunst/dunstrc $${HOME}/.config/dunst/dunstrc || true
 	@echo "Complete setting dunst!"
+
+.PHONY: set-aerospace
+ifeq ($(UNAME_S), Darwin)
+set-aerospace:
+	@echo "Setting up aerospace..."
+	@echo "You are not using macOS"
+else
+set-aerospace:
+	@echo "Setting up aerospace..."
+	@mkdir -p $${HOME}/.config/aerospace
+	@$(LINK_FILE) $${PWD}/dotfiles/aerospace/aerospace.toml $${HOME}/.config/aerospace/aerospace.toml || true
+	@echo "Complete setting aerospace!"
+endif
