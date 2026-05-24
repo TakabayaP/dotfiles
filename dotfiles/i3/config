@@ -202,11 +202,11 @@ exec --no-startup-id "feh --bg-fill BACKGROUND_IMAGE_PATH"
 exec --no-startup-id picom -b
 
 # print screen 
-bindsym Print exec --no-startup-id gscreenshot -sc
+bindsym Control+Shift+4 exec --no-startup-id gscreenshot -sc
 
 # set xrandr screen setting
 exec --no-startup-id XRANDR_SCREEN_SETTING_COMMAND
-I3_WORKSPACE_NUMBER_SETTINGS
+#I3_WORKSPACE_NUMBER_SETTINGS
 
 # turn on redshift
 exec --no-startup-id redshift 
