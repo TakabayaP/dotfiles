@@ -1,7 +1,12 @@
 { ... }:
 {
-  home.file.".config/borders/bordersrc" = {
-    source = ../../dotfiles/borders/bordersrc;
-    executable = true;
+  services.jankyborders = {
+    enable = true;
+    settings = {
+      style = "square";
+      width = 5.0;
+      hidpi = "on";
+      active_color = "0x82959EFF";
+    };
   };
 }
