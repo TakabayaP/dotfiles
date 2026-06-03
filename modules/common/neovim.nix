@@ -19,6 +19,7 @@
       expandtab = true;
       softtabstop = 4;
       termguicolors = true;
+      mouse = "a";
     };
 
     # --------------------------------------------------------------------------
