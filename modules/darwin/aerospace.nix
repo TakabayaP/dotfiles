@@ -11,7 +11,7 @@
       on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
 
       mode.main.binding = {
-        alt-enter = "exec-and-forget /Applications/Alacritty.app/Contents/MacOS/alacritty";
+        alt-enter = "exec-and-forget ~/.nix-profile/bin/alacritty";
 
         alt-h = "focus --boundaries all-monitors-outer-frame left";
         alt-j = "focus --boundaries all-monitors-outer-frame down";
