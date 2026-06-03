@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# --- Colors (Catppuccin Mocha) ---
+BAR_COLOR="0xff1e1e2e"
+ITEM_BG_COLOR="0xff313244"
+ACCENT_COLOR="0xff89b4fa"
+FG_COLOR="0xffcdd6f4"
+FG_INACTIVE="0xff6c7086"
+
+# --- Bar ---
+sketchybar --bar height=32 \
+                position=top \
+                sticky=on \
+                padding_left=8 \
+                padding_right=8 \
+                color="$BAR_COLOR"
+
+# --- Defaults ---
+sketchybar --default icon.font="Hack Nerd Font:Bold:14.0" \
+                     icon.color="$FG_COLOR" \
+                     label.font="Hack Nerd Font:Regular:13.0" \
+                     label.color="$FG_COLOR" \
+                     background.color="$ITEM_BG_COLOR" \
+                     background.corner_radius=5 \
+                     background.height=24 \
+                     padding_left=5 \
+                     padding_right=5 \
+                     label.padding_left=4 \
+                     label.padding_right=4 \
+                     icon.padding_left=4 \
+                     icon.padding_right=4
+
+# --- Aerospace Workspace Change Event ---
+sketchybar --add event aerospace_workspace_change
+
+# --- Workspaces (left) ---
+for i in $(seq 1 10); do
+  sketchybar --add item "space.$i" left \
+             --subscribe "space.$i" aerospace_workspace_change \
+             --set "space.$i" \
+               icon="$i" \
+               icon.color="$FG_INACTIVE" \
+               label.drawing=off \
+               script="$PLUGIN_DIR/aerospace.sh" \
+               click_script="aerospace workspace $i" \
+               background.drawing=off
+done
+
+# Highlight current workspace on launch
+CURRENT="$(aerospace list-workspaces --focused 2>/dev/null || echo 1)"
+sketchybar --set "space.$CURRENT" background.drawing=on icon.color="$FG_COLOR"
+
+# --- Front App (left) ---
+sketchybar --add item front_app left \
+           --subscribe front_app front_app_switched \
+           --set front_app \
+             icon.drawing=off \
+             script="$PLUGIN_DIR/front_app.sh"
+
+# --- Clock (right) ---
+sketchybar --add item clock right \
+           --set clock \
+             icon="󰥔" \
+             update_freq=10 \
+             script="$PLUGIN_DIR/clock.sh"
+
+# --- Battery (right) ---
+sketchybar --add item battery right \
+           --set battery \
+             update_freq=120 \
+             script="$PLUGIN_DIR/battery.sh"
+
+# --- Init ---
+sketchybar --update
