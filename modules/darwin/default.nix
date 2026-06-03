@@ -1,5 +1,9 @@
 { ... }:
 {
+  imports = [
+    ./alacritty.nix
+  ];
+
   services.jankyborders = {
     enable = true;
     settings = {

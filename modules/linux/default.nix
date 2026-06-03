@@ -14,6 +14,10 @@ let
     (builtins.readFile ../../dotfiles/i3/config);
 in
 {
+  imports = [
+    ./alacritty.nix
+  ];
+
   xsession.enable = true;
   xsession.windowManager.i3 = {
     enable = true;
