@@ -20,6 +20,7 @@
       softtabstop = 4;
       termguicolors = true;
       mouse = "a";
+      directory = "$HOME/.nvim/tmp//";
     };
 
     # --------------------------------------------------------------------------
