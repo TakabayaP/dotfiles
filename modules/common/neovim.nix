@@ -99,6 +99,30 @@
         gopls.enable = true;
         eslint.enable = false;
       };
+      keymaps = {
+        lspBuf = {
+          "gd" = "definition";
+          "K" = "hover";
+          "<F2>" = "rename";
+          "<leader>ca" = "code_action";
+        };
+        extra = [
+          { key = "gr"; action.__raw = "require('telescope.builtin').lsp_references"; mode = "n"; }
+        ];
+      };
+    };
+
+    diagnostics = {
+      underline = true;
+      virtual_text = true;
+      signs = true;
+    };
+
+    highlightOverride = {
+      DiagnosticUnderlineError = { underline = true; sp = "#ff0000"; };
+      DiagnosticUnderlineWarn = { underline = true; sp = "#ffcc00"; };
+      DiagnosticUnderlineInfo = { underline = true; sp = "#00bfff"; };
+      DiagnosticUnderlineHint = { underline = true; sp = "#888888"; };
     };
 
     plugins.conform-nvim = {
@@ -372,42 +396,50 @@
       { mode = "n"; key = "<leader>d"; action.__raw = "vim.diagnostic.open_float"; options.desc = "エラー内容を表示"; }
       { mode = "n"; key = "]d"; action.__raw = "vim.diagnostic.goto_next"; options.desc = "次のエラーへ"; }
       { mode = "n"; key = "[d"; action.__raw = "vim.diagnostic.goto_prev"; options.desc = "前のエラーへ"; }
+
+      # コードリンクコピー
+      {
+        mode = "n"; key = "<F15>"; options.desc = "Copy code link (Cmd+L)";
+        action.__raw = ''
+          function()
+            local filepath = vim.fn.expand('%:.')
+            local line = vim.fn.line('.')
+            local link = filepath .. ':' .. line
+            vim.fn.setreg('+', link)
+            vim.notify('Copied: ' .. link, vim.log.levels.INFO)
+          end
+        '';
+      }
+
+      # セッション復元
+      { mode = "n"; key = "<leader>sr"; action.__raw = "function() require('persistence').load() end"; options.desc = "セッション復元"; }
+      { mode = "n"; key = "<leader>sl"; action.__raw = "function() require('persistence').load({ last = true }) end"; options.desc = "最後のセッションを復元"; }
+      { mode = "n"; key = "<leader>sd"; action.__raw = "function() require('persistence').stop() end"; options.desc = "セッション自動保存を停止"; }
+
+      # Neogen
+      { mode = "n"; key = "<leader>jd"; action.__raw = "function() require('neogen').generate() end"; options.desc = "JSDoc アノテーション生成"; }
     ];
 
     # --------------------------------------------------------------------------
-    # extraConfigLua (ロジックを含む設定)
+    # Lua ファイル (extraFiles で ~/.config/nvim/lua/custom/ に配置)
+    # --------------------------------------------------------------------------
+
+    extraFiles = {
+      "lua/custom/worktree.lua".source = ./neovim/worktree.lua;
+      "lua/custom/terminal.lua".source = ./neovim/terminal.lua;
+      "lua/custom/find-files.lua".source = ./neovim/find-files.lua;
+    };
+
+    # --------------------------------------------------------------------------
+    # extraConfigLua (宣言的に表現できない最小限の設定)
     # --------------------------------------------------------------------------
 
     extraConfigLua = ''
-      -- statuscolumn
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
-
-      -- sessionoptions から terminal を除外
       vim.opt.sessionoptions:remove('terminal')
 
-      -- :q でバッファを閉じる (最後の1つなら Neovim を終了)
-      vim.api.nvim_create_user_command('Q', function()
-        local wins = vim.tbl_filter(function(w)
-          return vim.api.nvim_win_get_config(w).relative == ""
-        end, vim.api.nvim_tabpage_list_wins(0))
-        if #wins > 1 then
-          vim.cmd('quit')
-        else
-          local bufs = vim.tbl_filter(function(b) return vim.bo[b].buflisted end, vim.api.nvim_list_bufs())
-          if #bufs > 1 then
-            vim.cmd('bdelete')
-          else
-            vim.cmd('quit')
-          end
-        end
-      end, {})
-      vim.cmd([[cnoreabbrev <expr> q getcmdtype() == ':' && getcmdline() == 'q' ? 'Q' : 'q']])
-      vim.cmd([[cnoreabbrev <expr> hs getcmdtype() == ':' && getcmdline() == 'hs' ? 'sp' : 'hs']])
-
-      -- persistence.nvim セットアップ
+      -- プラグインセットアップ
       require("persistence").setup({})
-
-      -- neogen セットアップ
       require("neogen").setup({
         snippet_engine = "luasnip",
         languages = {
@@ -417,247 +449,11 @@
           javascriptreact = { template = { annotation_convention = "jsdoc" } },
         },
       })
-      vim.keymap.set('n', '<leader>jd', function() require("neogen").generate() end, { desc = "JSDoc アノテーション生成" })
 
-      -- git-worktree セットアップ (v2.x API)
-      require("telescope").load_extension("git_worktree")
-      local hooks = require("git-worktree.hooks")
-      hooks.register(hooks.type.SWITCH, function(path, prev_path)
-        vim.schedule(function()
-          vim.cmd('%bdelete!')
-          local ok, persistence = pcall(require, "persistence")
-          if ok then persistence.load() end
-          vim.cmd("doautoall FileType")
-        end)
-      end)
-      hooks.register(hooks.type.DELETE, function(path)
-        vim.schedule(function()
-          if path then
-            _G._wt_diff_cache[path] = nil
-          end
-          if _G._wt_update_cache then _G._wt_update_cache() end
-        end)
-      end)
-
-      -- ファイル一覧キャッシュ
-      _G._file_cache = nil
-      local function refresh_file_cache()
-        vim.fn.jobstart({ 'fd', '--type', 'f', '--hidden', '--exclude', '.git' }, {
-          stdout_buffered = true,
-          on_stdout = function(_, data)
-            _G._file_cache = vim.tbl_filter(function(line) return line ~= "" end, data)
-          end,
-        })
-      end
-      vim.api.nvim_create_autocmd("VimEnter", { callback = refresh_file_cache })
-      vim.api.nvim_create_autocmd("DirChanged", { callback = refresh_file_cache })
-      vim.api.nvim_create_autocmd("BufWritePost", {
-        callback = function(ev)
-          local path = ev.file
-          if _G._file_cache and not vim.tbl_contains(_G._file_cache, path) then
-            refresh_file_cache()
-          end
-        end,
-      })
-
-      local function cached_find_files()
-        if _G._file_cache then
-          require('telescope.pickers').new({}, {
-            prompt_title = 'Find Files',
-            finder = require('telescope.finders').new_table({ results = _G._file_cache }),
-            sorter = require('telescope.config').values.file_sorter({}),
-            previewer = require('telescope.config').values.file_previewer({}),
-          }):find()
-        else
-          require('telescope.builtin').find_files()
-        end
-      end
-      vim.keymap.set('n', '<leader>ff', cached_find_files, { desc = "Find Files" })
-      vim.keymap.set('n', '<F13>', cached_find_files, { desc = "Find Files (Cmd+P)" })
-
-      -- ターミナル切替
-      local _term_buf = nil
-      local function toggle_terminal()
-        if _term_buf and vim.api.nvim_buf_is_valid(_term_buf) then
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            if vim.api.nvim_win_get_buf(win) == _term_buf then
-              local wins = vim.tbl_filter(function(w)
-                return vim.api.nvim_win_get_config(w).relative == ""
-              end, vim.api.nvim_tabpage_list_wins(0))
-              if #wins <= 1 then vim.cmd('enew') end
-              vim.api.nvim_win_hide(win)
-              return
-            end
-          end
-          vim.cmd('botright 15split')
-          vim.api.nvim_set_current_buf(_term_buf)
-          vim.cmd('startinsert')
-        else
-          vim.cmd('botright 15split | terminal')
-          _term_buf = vim.api.nvim_get_current_buf()
-          vim.cmd('startinsert')
-        end
-      end
-      vim.keymap.set({'n', 't', 'i'}, '<F19>', toggle_terminal, { desc = "ターミナル切替 (Cmd+J)" })
-
-      -- コードリンクコピー
-      vim.keymap.set('n', '<F15>', function()
-        local filepath = vim.fn.expand('%:.')
-        local line = vim.fn.line('.')
-        local link = filepath .. ':' .. line
-        vim.fn.setreg('+', link)
-        vim.notify('Copied: ' .. link, vim.log.levels.INFO)
-      end, { desc = "Copy code link (Cmd+L)" })
-
-      -- セッション復元
-      vim.keymap.set('n', '<leader>sr', function() require("persistence").load() end, { desc = "セッション復元 (このディレクトリ)" })
-      vim.keymap.set('n', '<leader>sl', function() require("persistence").load({ last = true }) end, { desc = "最後のセッションを復元" })
-      vim.keymap.set('n', '<leader>sd', function() require("persistence").stop() end, { desc = "セッション自動保存を停止" })
-
-      -- 診断表示
-      vim.diagnostic.config({
-        underline = true,
-        virtual_text = true,
-        signs = true,
-      })
-      vim.api.nvim_set_hl(0, 'DiagnosticUnderlineError', { underline = true, sp = '#ff0000' })
-      vim.api.nvim_set_hl(0, 'DiagnosticUnderlineWarn', { underline = true, sp = '#ffcc00' })
-      vim.api.nvim_set_hl(0, 'DiagnosticUnderlineInfo', { underline = true, sp = '#00bfff' })
-      vim.api.nvim_set_hl(0, 'DiagnosticUnderlineHint', { underline = true, sp = '#888888' })
-
-      -- LSP キーバインド
-      vim.api.nvim_create_autocmd('LspAttach', {
-        callback = function(ev)
-          local opts = { buffer = ev.buf }
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-        end,
-      })
-
-      -- Git ワークツリー: 差分キャッシュ
-      _G._wt_diff_cache = _G._wt_diff_cache or {}
-
-      local function wt_parse_list()
-        local output = vim.fn.systemlist('git worktree list --porcelain')
-        local worktrees = {}
-        local w = {}
-        for _, line in ipairs(output) do
-          if line:match('^worktree ') then
-            w = { path = line:match('^worktree (.+)') }
-          elseif line:match('^branch ') then
-            w.branch = line:match('^branch refs/heads/(.+)')
-          elseif line == "" and w.path then
-            table.insert(worktrees, w)
-            w = {}
-          end
-        end
-        if w.path then table.insert(worktrees, w) end
-        return worktrees
-      end
-
-      local function wt_update_cache()
-        local ok, worktrees = pcall(wt_parse_list)
-        if not ok or #worktrees == 0 then
-          _G._wt_diff_cache = {}
-          return
-        end
-        local active_paths = {}
-        for _, w in ipairs(worktrees) do active_paths[w.path] = true end
-        for path in pairs(_G._wt_diff_cache) do
-          if not active_paths[path] then _G._wt_diff_cache[path] = nil end
-        end
-        for _, w in ipairs(worktrees) do
-          vim.fn.jobstart({ 'git', '-C', w.path, 'diff', '--numstat' }, {
-            stdout_buffered = true,
-            on_stdout = function(_, data)
-              local add, del = 0, 0
-              for _, line in ipairs(data) do
-                local a, d = line:match('^(%d+)%s+(%d+)')
-                if a then add = add + tonumber(a); del = del + tonumber(d) end
-              end
-              _G._wt_diff_cache[w.path] = { add = add, del = del }
-            end,
-          })
-        end
-      end
-
-      _G._wt_update_cache = wt_update_cache
-
-      vim.keymap.set('n', '<leader>wt', function()
-        wt_update_cache()
-        local pickers = require('telescope.pickers')
-        local finders = require('telescope.finders')
-        local conf = require('telescope.config').values
-        local actions = require('telescope.actions')
-        local action_state = require('telescope.actions.state')
-
-        local worktrees = wt_parse_list()
-
-        local max_branch = 0
-        for _, w in ipairs(worktrees) do
-          local b = w.branch or '(detached)'
-          if #b > max_branch then max_branch = #b end
-        end
-
-        pickers.new({}, {
-          prompt_title = 'Git Worktrees',
-          finder = finders.new_table({
-            results = worktrees,
-            entry_maker = function(entry)
-              local branch = entry.branch or '(detached)'
-              local cache = _G._wt_diff_cache[entry.path] or { add = 0, del = 0 }
-              local add_str = cache.add > 0 and string.format("+%d", cache.add) or ""
-              local del_str = cache.del > 0 and string.format("-%d", cache.del) or ""
-
-              local pad = string.rep(" ", max_branch - #branch)
-              local diff_part = string.format("%6s %6s", add_str, del_str)
-              local line = branch .. pad .. "  " .. diff_part
-
-              local highlights = {}
-              local diff_start = max_branch + 2
-              if add_str ~= "" then
-                local add_offset = diff_start + (6 - #add_str)
-                table.insert(highlights, { { add_offset, add_offset + #add_str }, "GitSignsAdd" })
-              end
-              if del_str ~= "" then
-                local del_offset = diff_start + 7 + (6 - #del_str)
-                table.insert(highlights, { { del_offset, del_offset + #del_str }, "GitSignsDelete" })
-              end
-
-              return {
-                value = entry,
-                display = function()
-                  return line, highlights
-                end,
-                ordinal = branch,
-              }
-            end,
-          }),
-          sorter = conf.generic_sorter({}),
-          attach_mappings = function(prompt_bufnr, map)
-            actions.select_default:replace(function()
-              local sel = action_state.get_selected_entry()
-              actions.close(prompt_bufnr)
-              if sel then
-                require("persistence").save()
-                require('git-worktree').switch_worktree(sel.value.path)
-              end
-            end)
-            map('i', '<C-d>', function()
-              local sel = action_state.get_selected_entry()
-              if sel then
-                actions.close(prompt_bufnr)
-                require('git-worktree').delete_worktree(sel.value.path)
-              end
-            end)
-            return true
-          end,
-        }):find()
-      end, { desc = "Git Worktree 一覧・切替" })
-      vim.keymap.set('n', '<leader>wc', function() require('telescope').extensions.git_worktree.create_git_worktree() end, { desc = "Git Worktree 作成" })
+      -- カスタムモジュール読み込み
+      require("custom.worktree")
+      require("custom.terminal")
+      require("custom.find-files")
     '';
   };
 }
