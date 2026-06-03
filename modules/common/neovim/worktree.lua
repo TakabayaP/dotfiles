@@ -153,8 +153,8 @@ vim.keymap.set("n", "<leader>wt", function()
       end,
     })
     :find()
-end, { desc = "Git Worktree 一覧・切替" })
+end, { desc = "Git Worktree list/switch" })
 
 vim.keymap.set("n", "<leader>wc", function()
   require("telescope").extensions.git_worktree.create_git_worktree()
-end, { desc = "Git Worktree 作成" })
+end, { desc = "Git Worktree create" })

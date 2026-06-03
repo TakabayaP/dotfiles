@@ -284,6 +284,13 @@
             end
           '';
         };
+        terminal = {
+          enabled = true;
+          win = {
+            position = "bottom";
+            height = 15;
+          };
+        };
         picker = {
           enabled = true;
           sources = {
@@ -344,9 +351,9 @@
       { mode = "v"; key = "<F20>"; action = "gc"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
       { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
 
-      # ターミナル操作
-      { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "ターミナルからウィンドウ操作"; }
-      { mode = "t"; key = "<Esc><Esc>"; action = "<C-\\><C-n>"; options.desc = "ターミナルでノーマルモードに切替"; }
+      # ターミナル
+      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Cmd+J)"; }
+      { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "Window nav from terminal"; }
 
       # ファイル検索 (Telescope)
       { mode = "n"; key = "<leader>fg"; action = "<cmd>Telescope live_grep<cr>"; options.desc = "Live Grep"; }
@@ -426,7 +433,6 @@
 
     extraFiles = {
       "lua/custom/worktree.lua".source = ./neovim/worktree.lua;
-      "lua/custom/terminal.lua".source = ./neovim/terminal.lua;
       "lua/custom/find-files.lua".source = ./neovim/find-files.lua;
     };
 
@@ -452,7 +458,6 @@
 
       -- カスタムモジュール読み込み
       require("custom.worktree")
-      require("custom.terminal")
       require("custom.find-files")
     '';
   };
