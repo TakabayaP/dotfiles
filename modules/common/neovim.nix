@@ -198,6 +198,11 @@
       };
     };
 
+    plugins.gitlinker = {
+      enable = true;
+      settings.mappings = null;
+    };
+
     plugins.nvim-autopairs = {
       enable = true;
     };
@@ -397,6 +402,21 @@
       { mode = "n"; key = "<leader>gh"; action = "<cmd>DiffviewFileHistory % --no-merges<cr>"; options = { desc = "現在ファイルのコミット履歴"; silent = true; }; }
       { mode = "n"; key = "<leader>gH"; action = "<cmd>DiffviewFileHistory --no-merges<cr>"; options = { desc = "リポジトリ全体のコミット履歴"; silent = true; }; }
       { mode = "n"; key = "<leader>gc"; action = "<cmd>DiffviewClose<cr>"; options = { desc = "Diffview を閉じる"; silent = true; }; }
+
+      # GitHub permalink
+      {
+        mode = ["n" "v"]; key = "<leader>gy"; options = { desc = "GitHub permalink"; silent = true; };
+        action.__raw = ''
+          function()
+            local bufname = vim.api.nvim_buf_get_name(0)
+            if bufname:match("^%w+://") then
+              vim.notify("permalink: real file buffer で実行してね", vim.log.levels.WARN)
+              return
+            end
+            require("gitlinker").get_buf_range_url(vim.fn.mode())
+          end
+        '';
+      }
 
       # LazyGit
       { mode = "n"; key = "<leader>gg"; action = "<cmd>LazyGit<cr>"; options = { desc = "LazyGit"; silent = true; }; }
