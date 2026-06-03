@@ -7,14 +7,19 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, ... }: {
+  outputs = { nixpkgs, home-manager, nixvim, ... }: {
     homeConfigurations."takabaya@takabayap-H1-arch-i3" =
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs { system = "x86_64-linux"; };
         extraSpecialArgs = { username = "takabaya"; };
         modules = [
+          nixvim.homeModules.nixvim
           ./hosts/takabayap-H1-arch/default.nix
           {
             home.stateVersion = "24.11";
@@ -28,6 +33,7 @@
         pkgs = import nixpkgs { system = "aarch64-darwin"; };
         extraSpecialArgs = { username = "katsumi.kobayashi"; };
         modules = [
+          nixvim.homeModules.nixvim
           ./hosts/macbook-pro/default.nix
           {
             home.stateVersion = "24.11";
