@@ -8,6 +8,11 @@
       enable-normalization-flatten-containers = false;
       enable-normalization-opposite-orientation-for-nested-containers = false;
 
+      "exec-on-workspace-change" = [
+        "/bin/bash" "-c"
+        "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
+      ];
+
       on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
 
       mode.main.binding = {

@@ -3,6 +3,7 @@
   imports = [
     ./aerospace.nix
     ./alacritty.nix
+    ./sketchybar.nix
   ];
 
   services.jankyborders = {
