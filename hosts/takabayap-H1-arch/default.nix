@@ -16,5 +16,8 @@
   home.username = username;
   home.homeDirectory = "/home/${username}";
 
-  imports = [ ../../modules/linux/default.nix ];
+  imports = [
+    ../../modules/common/default.nix
+    ../../modules/linux/default.nix
+  ];
 }

@@ -3,5 +3,8 @@
   home.username = username;
   home.homeDirectory = "/Users/${username}";
 
-  imports = [ ../../modules/darwin/default.nix ];
+  imports = [
+    ../../modules/common/default.nix
+    ../../modules/darwin/default.nix
+  ];
 }
