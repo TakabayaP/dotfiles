@@ -20,6 +20,7 @@
       softtabstop = 4;
       termguicolors = true;
       mouse = "a";
+      directory = "$HOME/.nvim/tmp//";
     };
 
     # --------------------------------------------------------------------------
@@ -103,7 +104,6 @@
       keymaps = {
         lspBuf = {
           "gd" = "definition";
-          "gi" = "implementation";
           "K" = "hover";
           "<F2>" = "rename";
           "<leader>ca" = "code_action";
@@ -121,12 +121,6 @@
     };
 
     highlightOverride = {
-      Normal = { bg = "none"; };
-      NormalNC = { bg = "none"; };
-      NormalFloat = { bg = "none"; };
-      SignColumn = { bg = "none"; };
-      LineNr = { bg = "none"; };
-      FoldColumn = { bg = "none"; };
       DiagnosticUnderlineError = { underline = true; sp = "#ff0000"; };
       DiagnosticUnderlineWarn = { underline = true; sp = "#ffcc00"; };
       DiagnosticUnderlineInfo = { underline = true; sp = "#00bfff"; };
