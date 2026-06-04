@@ -17,4 +17,13 @@ export CHROME_EXECUTABLE=/usr/bin/vivaldi-stable
 PATH=$ANDROID_HOME/emulator:$PATH
 PS1='[\u@\h \W]\$ '
 complete -cf sudo
+
+export PATH="$HOME/.local/bin:$PATH"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# Added by LM Studio CLI tool (lms)
+export PATH="$PATH:/Users/katsumi.kobayashi/.lmstudio/bin"
+
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
 fish
