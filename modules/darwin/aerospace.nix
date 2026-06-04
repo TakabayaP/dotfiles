@@ -8,9 +8,9 @@ let
 
     gaps = {
       outer.top = [
-        { monitor = { "BenQ GW2480.*1" = 32; }; }
-        { monitor = { "BenQ GW2480.*2" = 32; }; }
-        { monitor = { "LG HDR 4K" = 32; }; }
+        { monitor = { "BenQ GW2480.*1" = 38; }; }
+        { monitor = { "BenQ GW2480.*2" = 38; }; }
+        { monitor = { "LG HDR 4K" = 38; }; }
         0
       ];
     };
