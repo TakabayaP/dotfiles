@@ -32,6 +32,11 @@
 
   system.primaryUser = "katsumi.kobayashi";
 
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    reattach = true;
+  };
+
   nix.enable = false;
 
   system.stateVersion = 6;

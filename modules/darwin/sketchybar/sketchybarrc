@@ -2,15 +2,16 @@
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
-# --- Colors (Catppuccin Mocha) ---
-BAR_COLOR="0xff1e1e2e"
-ITEM_BG_COLOR="0xff313244"
+# --- Colors (Catppuccin Mocha, 80% opacity) ---
+BAR_COLOR="0xcc1e1e2e"
+BRACKET_BG="0xcc313244"
 ACCENT_COLOR="0xff89b4fa"
 FG_COLOR="0xffcdd6f4"
 FG_INACTIVE="0xff6c7086"
+GREEN="0xffa6e3a1"
 
 # --- Bar ---
-sketchybar --bar height=32 \
+sketchybar --bar height=38 \
                 position=top \
                 sticky=on \
                 padding_left=8 \
@@ -20,57 +21,150 @@ sketchybar --bar height=32 \
 # --- Defaults ---
 sketchybar --default icon.font="Hack Nerd Font:Bold:14.0" \
                      icon.color="$FG_COLOR" \
+                     icon.padding_left=8 \
+                     icon.padding_right=4 \
                      label.font="Hack Nerd Font:Regular:13.0" \
                      label.color="$FG_COLOR" \
-                     background.color="$ITEM_BG_COLOR" \
-                     background.corner_radius=5 \
-                     background.height=24 \
-                     padding_left=5 \
-                     padding_right=5 \
                      label.padding_left=4 \
-                     label.padding_right=4 \
-                     icon.padding_left=4 \
-                     icon.padding_right=4
+                     label.padding_right=8 \
+                     padding_left=4 \
+                     padding_right=4
 
-# --- Aerospace Workspace Change Event ---
+# --- Events ---
 sketchybar --add event aerospace_workspace_change
 
-# --- Workspaces (left) ---
+# ============================================================
+# LEFT SIDE
+# ============================================================
+
+# --- Workspaces ---
 for i in $(seq 1 10); do
   sketchybar --add item "space.$i" left \
              --subscribe "space.$i" aerospace_workspace_change \
              --set "space.$i" \
                icon="$i" \
-               icon.color="$FG_INACTIVE" \
+               icon.padding_left=10 \
+               icon.padding_right=10 \
                label.drawing=off \
+               background.color="$BRACKET_BG" \
+               background.corner_radius=5 \
+               background.height=24 \
+               background.drawing=off \
                script="$PLUGIN_DIR/aerospace.sh" \
-               click_script="aerospace workspace $i" \
-               background.drawing=off
+               click_script="aerospace workspace $i"
 done
 
-# Highlight current workspace on launch
 CURRENT="$(aerospace list-workspaces --focused 2>/dev/null || echo 1)"
 sketchybar --set "space.$CURRENT" background.drawing=on icon.color="$FG_COLOR"
 
-# --- Front App (left) ---
-sketchybar --add item front_app left \
-           --subscribe front_app front_app_switched \
-           --set front_app \
-             icon.drawing=off \
-             script="$PLUGIN_DIR/front_app.sh"
+# ============================================================
+# RIGHT SIDE
+# ============================================================
 
-# --- Clock (right) ---
-sketchybar --add item clock right \
-           --set clock \
+# --- Time ---
+sketchybar --add item time right \
+           --set time \
              icon="󰥔" \
-             update_freq=10 \
-             script="$PLUGIN_DIR/clock.sh"
+             update_freq=1 \
+             padding_left=4 \
+             padding_right=4 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
+             script="$PLUGIN_DIR/time.sh"
 
-# --- Battery (right) ---
+# --- Spacer ---
+sketchybar --add item spacer.1 right --set spacer.1 width=8
+
+# --- Battery ---
 sketchybar --add item battery right \
+           --subscribe battery power_source_change \
            --set battery \
-             update_freq=120 \
+             update_freq=30 \
+             padding_left=4 \
+             padding_right=4 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
              script="$PLUGIN_DIR/battery.sh"
+
+# --- Spacer ---
+sketchybar --add item spacer.2 right --set spacer.2 width=8
+
+# --- IME ---
+sketchybar --add item ime right \
+           --set ime \
+             update_freq=1 \
+             width=52 \
+             icon.width=18 \
+             icon.align=center \
+             label.width=22 \
+             label.align=center \
+             padding_left=3 \
+             padding_right=3 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
+             script="$PLUGIN_DIR/ime.sh"
+
+# --- Spacer ---
+sketchybar --add item spacer.5 right --set spacer.5 width=8
+
+# --- Volume ---
+sketchybar --add item volume right \
+           --subscribe volume volume_change \
+           --set volume \
+             update_freq=0 \
+             padding_left=4 \
+             padding_right=4 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
+             script="$PLUGIN_DIR/volume.sh"
+
+# --- Spacer ---
+sketchybar --add item spacer.4 right --set spacer.4 width=8
+
+# --- CPU Graph ---
+sketchybar --add graph cpu right 40 \
+           --set cpu \
+             icon.drawing=off \
+             label.padding_left=6 \
+             label.padding_right=6 \
+             update_freq=3 \
+             graph.color="$ACCENT_COLOR" \
+             graph.fill_color="0x4089b4fa" \
+             graph.line_width=1 \
+             width=120 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
+             script="$PLUGIN_DIR/cpu.sh"
+
+# --- Spacer ---
+sketchybar --add item spacer.3 right --set spacer.3 width=8
+
+# --- Memory Graph ---
+sketchybar --add graph memory right 40 \
+           --set memory \
+             icon.drawing=off \
+             label.padding_left=6 \
+             label.padding_right=6 \
+             update_freq=3 \
+             graph.color="$GREEN" \
+             graph.fill_color="0x40a6e3a1" \
+             graph.line_width=1 \
+             width=120 \
+             background.color="$BRACKET_BG" \
+             background.corner_radius=5 \
+             background.height=24 \
+             background.drawing=on \
+             script="$PLUGIN_DIR/memory.sh"
 
 # --- Init ---
 sketchybar --update
