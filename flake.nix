@@ -16,13 +16,17 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    liveWallpaperSrc = {
+      url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=release-build-without-previews&rev=b52c85ce8bf826f57d073343aea25f59c29d9dd1";
+      flake = false;
+    };
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, liveWallpaperSrc, ... }:
     let
       mkDarwinConfiguration = username: nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        specialArgs = { inherit username; };
+        specialArgs = { inherit username liveWallpaperSrc; };
         modules = [
           ./hosts/macbook/system.nix
           nix-homebrew.darwinModules.nix-homebrew
@@ -37,7 +41,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit username; };
+            home-manager.extraSpecialArgs = { inherit username liveWallpaperSrc; };
             home-manager.users.${username} = {
               imports = [
                 nixvim.homeModules.nixvim

@@ -49,6 +49,13 @@ Command Line Tools に含まれる。
 
 5. 対象端末の構成を適用する。
 
+   LiveWallpaper のソースは private repository なので、先にログインユーザーの
+   SSH 鍵で Flake inputs を Nix store へ取得する。
+
+   ```sh
+   nix flake archive --no-update-lock-file .
+   ```
+
    MacBook Air:
 
    ```sh
@@ -66,6 +73,7 @@ Command Line Tools に含まれる。
 2回目以降は次のコマンドで適用する。
 
 ```sh
+nix flake archive --no-update-lock-file .
 sudo darwin-rebuild switch --flake .#macbook-air
 ```
 
