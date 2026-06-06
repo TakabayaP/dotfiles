@@ -58,6 +58,24 @@
         "type": "github"
       }
     },
+    "liveWallpaperSrc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780766901,
+        "narHash": "sha256-RQe7R0z63/JQsHMblC3A0G9CHk3a9t3+225jKP758/o=",
+        "ref": "release-build-without-previews",
+        "rev": "b52c85ce8bf826f57d073343aea25f59c29d9dd1",
+        "revCount": 20,
+        "type": "git",
+        "url": "ssh://git@github.com/TakabayaP/live-wallpaper.git"
+      },
+      "original": {
+        "ref": "release-build-without-previews",
+        "rev": "b52c85ce8bf826f57d073343aea25f59c29d9dd1",
+        "type": "git",
+        "url": "ssh://git@github.com/TakabayaP/live-wallpaper.git"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -137,6 +155,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
+        "liveWallpaperSrc": "liveWallpaperSrc",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
