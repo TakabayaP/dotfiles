@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ username, ... }:
 {
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  users.users."katsumi.kobayashi" = {
-    home = "/Users/katsumi.kobayashi";
+  users.users.${username} = {
+    home = "/Users/${username}";
   };
 
   homebrew = {
@@ -30,7 +30,17 @@
     };
   };
 
-  system.primaryUser = "katsumi.kobayashi";
+  system.activationScripts.postActivation.text = ''
+    for app in AeroSpace Alacritty; do
+      if [ -d "/Applications/$app.app" ]; then
+        /usr/bin/xattr -dr com.apple.quarantine "/Applications/$app.app"
+      fi
+    done
+  '';
+
+  system.primaryUser = username;
+
+  system.defaults.NSGlobalDomain._HIHideMenuBar = true;
 
   security.pam.services.sudo_local = {
     touchIdAuth = true;

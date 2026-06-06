@@ -2,9 +2,14 @@
 let
   tomlFormat = pkgs.formats.toml { };
   aerospaceConfig = {
+    start-at-login = true;
+
     automatically-unhide-macos-hidden-apps = false;
     enable-normalization-flatten-containers = false;
     enable-normalization-opposite-orientation-for-nested-containers = false;
+
+    default-root-container-layout = "tiles";
+    default-root-container-orientation = "auto";
 
     gaps = {
       outer.top = [
@@ -20,12 +25,18 @@ let
       "/opt/homebrew/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
     ];
 
+    on-window-detected = [
+      {
+        run = "layout tiling";
+      }
+    ];
+
     on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
 
     mode.main.binding = {
       cmd-m = [ ];
 
-      alt-enter = "exec-and-forget open -na Alacritty";
+      alt-enter = "exec-and-forget /usr/bin/open -na /Applications/Alacritty.app";
 
       alt-h = "focus --boundaries all-monitors-outer-frame left";
       alt-j = "focus --boundaries all-monitors-outer-frame down";
