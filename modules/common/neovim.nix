@@ -20,6 +20,10 @@
       softtabstop = 4;
       termguicolors = true;
       mouse = "a";
+      shell =
+        if pkgs.stdenv.isDarwin
+        then "/opt/homebrew/bin/fish"
+        else "${pkgs.fish}/bin/fish";
     };
 
     # --------------------------------------------------------------------------
