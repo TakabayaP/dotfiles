@@ -22,7 +22,10 @@
       "orbstack"
     ];
     brews = [
-      "sketchybar"
+      {
+        name = "sketchybar";
+        start_service = true;
+      }
     ];
     onActivation = {
       autoUpdate = true;
