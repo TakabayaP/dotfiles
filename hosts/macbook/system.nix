@@ -22,6 +22,7 @@
       "orbstack"
     ];
     brews = [
+      "fish"
       {
         name = "sketchybar";
         start_service = true;
