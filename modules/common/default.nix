@@ -1,12 +1,11 @@
 { pkgs, ... }:
 {
   imports = [
-    ./neovim.nix
     ./alacritty.nix
+    ./neovim.nix
   ];
 
   home.packages = [
     pkgs.fastfetch
   ];
 }
-

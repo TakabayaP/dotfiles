@@ -15,6 +15,7 @@ let
 in
 {
   imports = [
+    ../common/alacritty.nix
     ./alacritty.nix
   ];
 
