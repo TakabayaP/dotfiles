@@ -16,6 +16,7 @@ let
         { monitor = { "BenQ GW2480.*1" = 38; }; }
         { monitor = { "BenQ GW2480.*2" = 38; }; }
         { monitor = { "LG HDR 4K" = 38; }; }
+        { monitor = { "LG HDR WQHD" = 38; }; }
         0
       ];
     };
