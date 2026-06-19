@@ -2,7 +2,7 @@
 {
   programs.tmux = {
     enable = true;
-    prefix = "C-a";
+    prefix = "C-Space";
     keyMode = "vi";
     baseIndex = 1;
     escapeTime = 0;
@@ -22,8 +22,8 @@
       # 新しいwindowを現在のパスで開く
       bind c new-window -c "#{pane_current_path}"
 
-      # C-a C-a で配下のシェルにC-aを送る (行頭移動用)
-      bind C-a send-prefix
+      # C-Space C-Space で配下にC-Spaceを送る
+      bind C-Space send-prefix
 
       # copy-mode (prefix+[ で入る、vで選択開始、yでコピー)
       bind -T copy-mode-vi v send-keys -X begin-selection
