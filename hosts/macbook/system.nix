@@ -1,4 +1,4 @@
-{ username, ... }:
+{ lib, username, ... }:
 {
   nixpkgs.hostPlatform = "aarch64-darwin";
 
@@ -44,7 +44,15 @@
 
   system.primaryUser = username;
 
-  system.defaults.NSGlobalDomain._HIHideMenuBar = true;
+  system.defaults = {
+    NSGlobalDomain = {
+      _HIHideMenuBar = true;
+      InitialKeyRepeat = 10;
+      KeyRepeat = 1;
+    };
+
+    CustomUserPreferences.".GlobalPreferences"."com.apple.mouse.scaling" = lib.mkForce (-1);
+  };
 
   security.pam.services.sudo_local = {
     touchIdAuth = true;
