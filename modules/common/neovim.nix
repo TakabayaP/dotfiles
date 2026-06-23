@@ -409,7 +409,7 @@
               local buf = vim.api.nvim_win_get_buf(win)
               local name = vim.api.nvim_buf_get_name(buf)
               if name:match("^gitsigns://") then
-                vim.api.nvim_win_close(win, true)
+                vim.api.nvim_buf_delete(buf, { force = true })
                 vim.cmd("diffoff")
                 return
               end
