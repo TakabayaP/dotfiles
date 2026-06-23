@@ -402,7 +402,22 @@
       { mode = "n"; key = "-"; action.__raw = "function() Snacks.explorer.open() end"; options.desc = "Explorer (toggle)"; }
 
       # Git差分・blame
-      { mode = "n"; key = "<leader>gd"; action = "<cmd>Gitsigns diffthis<cr>"; options = { desc = "Git Diff"; silent = true; }; }
+      { mode = "n"; key = "<leader>gd"; options = { desc = "Git Diff (toggle)"; silent = true; };
+        action.__raw = ''
+          function()
+            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+              local buf = vim.api.nvim_win_get_buf(win)
+              local name = vim.api.nvim_buf_get_name(buf)
+              if name:match("^gitsigns://") then
+                vim.api.nvim_win_close(win, true)
+                vim.cmd("diffoff")
+                return
+              end
+            end
+            require("gitsigns").diffthis()
+          end
+        '';
+      }
       { mode = "n"; key = "<leader>gb"; action = "<cmd>Gitsigns blame_line<cr>"; options = { desc = "Git Blame"; silent = true; }; }
       { mode = "n"; key = "<leader>gp"; action = "<cmd>Gitsigns preview_hunk<cr>"; options = { desc = "Git Hunk Preview"; silent = true; }; }
       { mode = "n"; key = "]c"; action = "<cmd>Gitsigns next_hunk<cr>"; options = { desc = "次の変更箇所"; silent = true; }; }
