@@ -16,13 +16,17 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    codex-desktop-linux = {
+      url = "github:ilysenko/codex-desktop-linux";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     liveWallpaperSrc = {
       url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=release-build-without-previews&rev=b52c85ce8bf826f57d073343aea25f59c29d9dd1";
       flake = false;
     };
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, liveWallpaperSrc, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, codex-desktop-linux, liveWallpaperSrc, ... }:
     let
       mkDarwinConfiguration = username: nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
@@ -53,24 +57,32 @@
           }
         ];
       };
+      mkLinuxHomeConfiguration = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
+        extraSpecialArgs = { username = "takabaya"; };
+        modules = [
+          nixvim.homeModules.nixvim
+          codex-desktop-linux.homeManagerModules.default
+          ./hosts/takabayap-H1-arch/default.nix
+          ({ pkgs, ... }: {
+            home.stateVersion = "24.11";
+            programs.home-manager.enable = true;
+            programs.codexDesktopLinux = {
+              enable = true;
+              cliPackage = pkgs.codex;
+            };
+          })
+        ];
+      };
     in {
     darwinConfigurations = {
       macbook-pro = mkDarwinConfiguration "katsumi.kobayashi";
       macbook-air = mkDarwinConfiguration "katsumikobayashi";
     };
 
-    homeConfigurations."takabaya@takabayap-H1-arch-i3" =
-      home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs { system = "x86_64-linux"; };
-        extraSpecialArgs = { username = "takabaya"; };
-        modules = [
-          nixvim.homeModules.nixvim
-          ./hosts/takabayap-H1-arch/default.nix
-          {
-            home.stateVersion = "24.11";
-            programs.home-manager.enable = true;
-          }
-        ];
-      };
+    homeConfigurations = {
+      "takabaya@takabayap-H1-arch" = mkLinuxHomeConfiguration;
+      "takabaya@takabayap-H1-arch-i3" = mkLinuxHomeConfiguration;
+    };
   };
 }
