@@ -20,6 +20,7 @@
       softtabstop = 4;
       termguicolors = true;
       mouse = "a";
+      autowriteall = true;
       shell =
         if pkgs.stdenv.isDarwin
         then "/opt/homebrew/bin/fish"
@@ -337,6 +338,7 @@
       neogen
       plenary-nvim
       nvim-web-devicons
+      nvim-treesitter-textobjects
     ];
 
     extraPackages = with pkgs; [
@@ -491,6 +493,45 @@
     extraConfigLua = ''
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
+
+      -- treesitter-textobjects
+      require("nvim-treesitter-textobjects").setup({
+        select = { lookahead = true },
+        move = { set_jumps = true },
+      })
+
+      local select_textobject = require("nvim-treesitter-textobjects.select").select_textobject
+      local move = require("nvim-treesitter-textobjects.move")
+
+      -- select keymaps
+      local select_maps = {
+        af = "@function.outer",
+        ["if"] = "@function.inner",
+        ac = "@class.outer",
+        ic = "@class.inner",
+        aa = "@parameter.outer",
+        ia = "@parameter.inner",
+        ai = "@conditional.outer",
+        ii = "@conditional.inner",
+        al = "@loop.outer",
+        il = "@loop.inner",
+      }
+      for key, query in pairs(select_maps) do
+        vim.keymap.set({ "x", "o" }, key, function()
+          select_textobject(query, "textobjects")
+        end, { desc = "TS: " .. query })
+      end
+
+      -- move keymaps
+      vim.keymap.set({ "n", "x", "o" }, "]f", function() move.goto_next_start("@function.outer", "textobjects") end, { desc = "Next function start" })
+      vim.keymap.set({ "n", "x", "o" }, "[f", function() move.goto_previous_start("@function.outer", "textobjects") end, { desc = "Prev function start" })
+      vim.keymap.set({ "n", "x", "o" }, "]a", function() move.goto_next_start("@parameter.outer", "textobjects") end, { desc = "Next parameter" })
+      vim.keymap.set({ "n", "x", "o" }, "[a", function() move.goto_previous_start("@parameter.outer", "textobjects") end, { desc = "Prev parameter" })
+
+      -- swap keymaps
+      local swap = require("nvim-treesitter-textobjects.swap")
+      vim.keymap.set("n", "<leader>a", function() swap.swap_next("@parameter.inner", "textobjects") end, { desc = "Swap param next" })
+      vim.keymap.set("n", "<leader>A", function() swap.swap_previous("@parameter.inner", "textobjects") end, { desc = "Swap param prev" })
 
       -- プラグインセットアップ
       require("persistence").setup({})
