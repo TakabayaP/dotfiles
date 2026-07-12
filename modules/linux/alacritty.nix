@@ -3,6 +3,8 @@ let
   esc = builtins.fromJSON "\"\\u001b\"";
 in
 {
+  programs.alacritty.package = null;
+
   programs.alacritty.settings.keyboard.bindings = [
     { key = "P"; mods = "Control"; chars = "${esc}[1;2P"; }
     { key = "F"; mods = "Control|Shift"; chars = "${esc}[1;2Q"; }
