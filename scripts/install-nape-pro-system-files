@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+target_user="${SUDO_USER:-${USER:?}}"
+
+sudo install -Dm0644 \
+  "$repo_root/system/udev/rules.d/99-nape-pro.rules" \
+  /etc/udev/rules.d/99-nape-pro.rules
+
+sudo install -Dm0644 \
+  "$repo_root/system/modules-load.d/uinput.conf" \
+  /etc/modules-load.d/uinput.conf
+
+sudo modprobe uinput
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw
+sudo udevadm trigger --subsystem-match=misc --attr-match=name=uinput || true
+
+if [ -e /dev/uinput ]; then
+  sudo chown "$target_user" /dev/uinput
+  sudo chmod 0600 /dev/uinput
+fi
+
+for sysdev in /sys/class/hidraw/hidraw*; do
+  [ -e "$sysdev" ] || continue
+  modalias_path="$(readlink -f "$sysdev/device")/modalias"
+  [ -r "$modalias_path" ] || continue
+  modalias="$(tr '[:upper:]' '[:lower:]' < "$modalias_path")"
+  case "$modalias" in
+    *v00003434*p00000440*)
+      dev="/dev/$(basename "$sysdev")"
+      sudo chown "$target_user" "$dev"
+      sudo chmod 0600 "$dev"
+      ;;
+  esac
+done
+
+echo "Installed Nape Pro udev rules and loaded uinput."
+echo "Reconnect the Nape Pro, or log out/in if device permissions do not update immediately."
