@@ -34,6 +34,9 @@ bindsym Ctrl+Mod1+l exec betterlockscreen -l
 # Start the patched Fcitx build.
 exec --no-startup-id start-fcitx5
 
+# Start a notification daemon with visible action buttons.
+exec --no-startup-id start-xfce4-notifyd
+
 # Send semantic input-mode keys on an Alt tap; Fcitx handles the switch.
 exec_always --no-startup-id start-alt-tap-input
 bindsym Henkan_Mode exec --no-startup-id activate-fcitx5
