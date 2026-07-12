@@ -13,6 +13,7 @@
         normal.family = "Hack Nerd Font Mono";
       };
 
+      window.opacity = 0.8;
       window.decorations = "None";
     };
   };
