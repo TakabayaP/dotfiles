@@ -1,0 +1,4 @@
+# Allow the user session to read Nape Pro hidraw reports and create uinput events.
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="3434", ATTRS{idProduct}=="0440", OWNER="takabaya", MODE="0600", TAG+="uaccess"
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ENV{HID_ID}=="0003:00003434:00000440", OWNER="takabaya", MODE="0600", TAG+="uaccess"
+SUBSYSTEM=="misc", KERNEL=="uinput", OWNER="takabaya", MODE="0600", TAG+="uaccess", OPTIONS+="static_node=uinput"
