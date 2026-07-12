@@ -1,0 +1,9 @@
+diff --git a/src/skk.cpp b/src/skk.cpp
+index 1a10f56..9e91396 100644
+--- a/src/skk.cpp
++++ b/src/skk.cpp
+@@ -376,3 +376,5 @@ void SkkEngine::activate(const InputMethodEntry &entry,
+                          InputContextEvent &event) {
+     FCITX_UNUSED(entry);
++    auto *skkstate = state(event.inputContext());
++    skk_context_set_input_mode(skkstate->context(), *config_.inputMode);
