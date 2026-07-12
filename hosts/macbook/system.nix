@@ -18,6 +18,7 @@
       "font-hack-nerd-font"
       "macskk"
       "1password-cli"
+      "cloudflare-warp"
       "gcloud-cli"
       "orbstack"
     ];

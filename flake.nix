@@ -29,6 +29,7 @@
         specialArgs = { inherit username liveWallpaperSrc; };
         modules = [
           ./hosts/macbook/system.nix
+          ./modules/darwin/warp-homecloud-route.nix
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
