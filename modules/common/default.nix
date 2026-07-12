@@ -8,5 +8,6 @@
 
   home.packages = [
     pkgs.fastfetch
+    pkgs.nerd-fonts.hack
   ];
 }
