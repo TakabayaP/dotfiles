@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./alacritty.nix
@@ -10,4 +10,9 @@
     pkgs.fastfetch
     pkgs.nerd-fonts.hack
   ];
+
+  programs.nh = {
+    enable = true;
+    flake = "${config.home.homeDirectory}/git/dotfiles";
+  };
 }
