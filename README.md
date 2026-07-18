@@ -87,6 +87,36 @@ sudo darwin-rebuild switch --flake .#macbook-air
   重複しないよう `null` にする。
 - GUI アプリケーションを Nix package と Homebrew cask の両方から導入しない。
 
+Keykun だけは個人用の SwiftPM アプリなので、fork の `main` を Flake input として
+Nix package にしている。`flake.lock` に取得時のコミットが固定されるため、別の Mac
+でも同じソースから再現できる。
+
+Keykun の package だけを先にビルドする場合:
+
+```sh
+nix build .#keykun
+```
+
+通常は darwin-rebuild が必要な package build と Home Manager のインストールをまとめて
+行う。
+
+```sh
+nix flake archive --no-update-lock-file .
+sudo darwin-rebuild switch --flake .#macbook-pro
+```
+
+これにより `~/Applications/Keykun.app`、現在の入力切り替え/Slack Esc 設定、ログイン時の
+起動設定が用意される。Nix のビルド自体は通常の Nix ビルダーで行われ、`sudo` は
+darwin-rebuild のシステム適用にだけ使う。
+
+macOS の Accessibility 権限は TCC の仕様上、通常の Nix 設定からユーザー許可を直接
+付与できない。初回だけ次を実行し、システム設定の「プライバシーとセキュリティ」>
+「アクセシビリティ」で `~/Applications/Keykun.app` を許可する。
+
+```sh
+open "$HOME/Applications/Keykun.app"
+```
+
 ## `.env` ファイル
 
 `settings.env` と `secrets.env` は旧 `Makefile` の Linux 向け設定であり、

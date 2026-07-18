@@ -3,6 +3,7 @@
   imports = [
     ./aerospace.nix
     ./alacritty.nix
+    ./keykun.nix
     ./live-wallpaper.nix
     ./sketchybar.nix
   ];
