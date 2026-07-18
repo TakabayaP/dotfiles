@@ -25,7 +25,21 @@ let
 
     exec-on-workspace-change = [
       "/bin/bash" "-c"
-      "/opt/homebrew/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
+      ''
+        STATE_DIR="''${TMPDIR:-/tmp}/aerospace-sketchybar"
+        LOCK_DIR="$STATE_DIR/lock"
+        mkdir -p "$STATE_DIR"
+        printf '%s' "$AEROSPACE_FOCUSED_WORKSPACE" > "$STATE_DIR/focused"
+        printf '%s' "$AEROSPACE_PREV_WORKSPACE" > "$STATE_DIR/prev"
+        if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+          exit 0
+        fi
+        trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
+        sleep 0.05
+        F=$(cat "$STATE_DIR/focused")
+        P=$(cat "$STATE_DIR/prev")
+        /opt/homebrew/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$F" PREV_WORKSPACE="$P"
+      ''
     ];
 
     on-window-detected = [

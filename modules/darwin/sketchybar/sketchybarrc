@@ -40,7 +40,6 @@ sketchybar --add event aerospace_workspace_change
 # --- Workspaces ---
 for i in $(seq 1 10); do
   sketchybar --add item "space.$i" left \
-             --subscribe "space.$i" aerospace_workspace_change \
              --set "space.$i" \
                icon="$i" \
                icon.padding_left=10 \
@@ -50,9 +49,19 @@ for i in $(seq 1 10); do
                background.corner_radius=5 \
                background.height=24 \
                background.drawing=off \
-               script="$PLUGIN_DIR/aerospace.sh" \
                click_script="aerospace workspace $i"
 done
+
+sketchybar --add item aerospace.workspace.listener left \
+           --subscribe aerospace.workspace.listener aerospace_workspace_change \
+           --set aerospace.workspace.listener \
+             drawing=off \
+             width=0 \
+             icon.drawing=off \
+             label.drawing=off \
+             padding_left=0 \
+             padding_right=0 \
+             script="$PLUGIN_DIR/aerospace.sh"
 
 CURRENT="$(aerospace list-workspaces --focused 2>/dev/null || echo 1)"
 sketchybar --set "space.$CURRENT" background.drawing=on icon.color="$FG_COLOR"
