@@ -58,6 +58,23 @@
         "type": "github"
       }
     },
+    "keykunSrc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784366741,
+        "narHash": "sha256-NNn9ZAhK4jRITcikQOQibNqYOHKwnPyZVs5307K1z3Y=",
+        "owner": "TakabayaP",
+        "repo": "keykun",
+        "rev": "379a183165cd9b8af94b53b1a5c6b81a4432d23c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TakabayaP",
+        "ref": "main",
+        "repo": "keykun",
+        "type": "github"
+      }
+    },
     "liveWallpaperSrc": {
       "flake": false,
       "locked": {
@@ -155,6 +172,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
+        "keykunSrc": "keykunSrc",
         "liveWallpaperSrc": "liveWallpaperSrc",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

@@ -20,13 +20,17 @@
       url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=release-build-without-previews&rev=b52c85ce8bf826f57d073343aea25f59c29d9dd1";
       flake = false;
     };
+    keykunSrc = {
+      url = "github:TakabayaP/keykun?ref=main";
+      flake = false;
+    };
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, liveWallpaperSrc, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, liveWallpaperSrc, keykunSrc, ... }:
     let
       mkDarwinConfiguration = username: nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        specialArgs = { inherit username liveWallpaperSrc; };
+        specialArgs = { inherit username liveWallpaperSrc keykunSrc; };
         modules = [
           ./hosts/macbook/system.nix
           ./modules/darwin/warp-homecloud-route.nix
@@ -42,7 +46,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit username liveWallpaperSrc; };
+            home-manager.extraSpecialArgs = { inherit username liveWallpaperSrc keykunSrc; };
             home-manager.users.${username} = {
               imports = [
                 nixvim.homeModules.nixvim
@@ -59,6 +63,11 @@
       macbook-pro = mkDarwinConfiguration "katsumi.kobayashi";
       macbook-air = mkDarwinConfiguration "katsumikobayashi";
     };
+
+    packages.aarch64-darwin.keykun =
+      (import nixpkgs { system = "aarch64-darwin"; }).callPackage ./modules/darwin/keykun-package.nix {
+        inherit keykunSrc;
+      };
 
     homeConfigurations."takabaya@takabayap-H1-arch-i3" =
       home-manager.lib.homeManagerConfiguration {
