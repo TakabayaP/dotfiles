@@ -31,6 +31,7 @@ in
     ./alacritty.nix
     ./fcitx5.nix
     ./desktop-ui.nix
+    ./codex-gui-mcp.nix
     ./nape-pro.nix
   ];
 
