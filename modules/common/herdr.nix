@@ -30,10 +30,17 @@
     focus_pane_right = "prefix+l"
 
     new_tab = "prefix+c"
+    switch_workspace = "prefix+shift+1..9"
+    open_notification_target = "prefix+o"
     zoom = "prefix+f"
 
     [ui]
     mouse_capture = true
     copy_on_select = true
+
+    # open_notification_target can jump only while the notification is visible.
+    [ui.toast]
+    delivery = "herdr"
+    delay_seconds = 1
   '';
 }
