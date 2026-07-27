@@ -136,11 +136,16 @@ prefix は tmux と同じ `C-Space`。主なキーは以下のとおり。
 | pane 移動 | `C-Space h/j/k/l` |
 | pane zoom 切替 | `C-Space f` |
 | 新しい tab | `C-Space c` |
+| tab 1〜9へ移動 | `C-Space 1〜9` |
 | workspace 1〜9へ移動 | `C-Space Shift+1〜9` |
 | workspace 一覧 | `C-Space w` |
 | 表示中の通知元へ移動 | `C-Space o` |
 | キー一覧 | `C-Space ?` |
 | detach | `C-Space q` |
+
+pane 移動と番号移動では prefix 後も Ctrl を離さなくてよい。
+`C-Space C-h/j/k/l`、`C-Space C-1〜9`、`C-Space C-Shift-1〜9` も
+それぞれ同じ操作として扱われる。
 
 agent の完了・入力待ち通知は Herdr 内に表示される。通知が表示されている間に
 `C-Space o` を押すと、その workspace / tab / pane へ移動できる。
