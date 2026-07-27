@@ -134,6 +134,7 @@ prefix は tmux と同じ `C-Space`。主なキーは以下のとおり。
 | --- | --- |
 | 右・下に pane 分割 | `C-Space v` / `C-Space s` |
 | pane 移動 | `C-Space h/j/k/l` |
+| pane zoom 切替 | `C-Space f` |
 | 新しい tab | `C-Space c` |
 | workspace 一覧 | `C-Space w` |
 | キー一覧 | `C-Space ?` |

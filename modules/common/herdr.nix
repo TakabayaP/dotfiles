@@ -30,6 +30,7 @@
     focus_pane_right = "prefix+l"
 
     new_tab = "prefix+c"
+    zoom = "prefix+f"
 
     [ui]
     mouse_capture = true
