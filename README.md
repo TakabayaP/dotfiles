@@ -143,12 +143,13 @@ prefix は tmux と同じ `C-Space`。主なキーは以下のとおり。
 | キー一覧 | `C-Space ?` |
 | detach | `C-Space q` |
 
-pane 移動と番号移動では prefix 後も Ctrl を離さなくてよい。
-`C-Space C-h/j/k/l`、`C-Space C-1〜9`、`C-Space C-Shift-1〜9` も
-それぞれ同じ操作として扱われる。
+pane の分割・移動・zoom、sidebar、番号移動では prefix 後も Ctrl を離さなくてよい。
+`C-Space C-v/s`、`C-Space C-h/j/k/l`、`C-Space C-f/b`、
+`C-Space C-1〜9`、`C-Space C-Shift-1〜9` もそれぞれ同じ操作として扱われる。
 
 agent の完了・入力待ち通知は Herdr 内に表示される。通知が表示されている間に
-`C-Space o` を押すと、その workspace / tab / pane へ移動できる。
+`C-Space o` を押すと、その workspace / tab / pane へ移動できる。Herdr 0.7.5では
+完了通知は5秒、入力待ち通知は8秒表示される。
 
 detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
 停止は `herdr server stop` を使用する。

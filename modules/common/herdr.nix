@@ -21,8 +21,8 @@
     # prefix+s is used for a horizontal split, as in the tmux config.
     settings = "prefix+shift+s"
 
-    split_vertical = "prefix+v"
-    split_horizontal = "prefix+s"
+    split_vertical = ["prefix+v", "prefix+ctrl+v"]
+    split_horizontal = ["prefix+s", "prefix+ctrl+s"]
 
     # Accept both releasing Ctrl after the prefix and keeping it held.
     focus_pane_left = ["prefix+h", "prefix+ctrl+h"]
@@ -34,7 +34,8 @@
     switch_tab = ["prefix+1..9", "prefix+ctrl+1..9"]
     switch_workspace = ["prefix+shift+1..9", "prefix+ctrl+shift+1..9"]
     open_notification_target = "prefix+o"
-    zoom = "prefix+f"
+    zoom = ["prefix+f", "prefix+ctrl+f"]
+    toggle_sidebar = ["prefix+b", "prefix+ctrl+b"]
 
     [ui]
     mouse_capture = true
