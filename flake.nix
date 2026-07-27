@@ -16,6 +16,7 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    herdr.url = "github:ogulcancelik/herdr/v0.7.5";
     liveWallpaperSrc = {
       url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=release-build-without-previews&rev=b52c85ce8bf826f57d073343aea25f59c29d9dd1";
       flake = false;
@@ -26,7 +27,7 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, liveWallpaperSrc, keykunSrc, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, herdr, liveWallpaperSrc, keykunSrc, ... }:
     let
       mkDarwinConfiguration = username: nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
@@ -46,7 +47,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit username liveWallpaperSrc keykunSrc; };
+            home-manager.extraSpecialArgs = { inherit username herdr liveWallpaperSrc keykunSrc; };
             home-manager.users.${username} = {
               imports = [
                 nixvim.homeModules.nixvim
@@ -72,7 +73,7 @@
     homeConfigurations."takabaya@takabayap-H1-arch-i3" =
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs { system = "x86_64-linux"; };
-        extraSpecialArgs = { username = "takabaya"; };
+        extraSpecialArgs = { username = "takabaya"; inherit herdr; };
         modules = [
           nixvim.homeModules.nixvim
           ./hosts/takabayap-H1-arch/default.nix

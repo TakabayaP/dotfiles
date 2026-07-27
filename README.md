@@ -117,6 +117,31 @@ macOS の Accessibility 権限は TCC の仕様上、通常の Nix 設定から�
 open "$HOME/Applications/Keykun.app"
 ```
 
+## Herdr
+
+Herdr は Home Manager から全端末へインストールする。tmux はフォールバックとして
+残している。プロジェクトのディレクトリで起動し、Herdr の pane 内では tmux を介さず
+Codex などを直接起動する。
+
+```sh
+cd ~/git/dotfiles
+herdr
+```
+
+prefix は tmux と同じ `C-Space`。主なキーは以下のとおり。
+
+| 操作 | キー |
+| --- | --- |
+| 右・下に pane 分割 | `C-Space v` / `C-Space s` |
+| pane 移動 | `C-Space h/j/k/l` |
+| 新しい tab | `C-Space c` |
+| workspace 一覧 | `C-Space w` |
+| キー一覧 | `C-Space ?` |
+| detach | `C-Space q` |
+
+detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
+停止は `herdr server stop` を使用する。
+
 ## `.env` ファイル
 
 `settings.env` と `secrets.env` は旧 `Makefile` の Linux 向け設定であり、
