@@ -8,6 +8,10 @@
 
     globals = {
       mapleader = " ";
+      VM_maps = {
+        "Add Cursor Down" = "<C-j>";
+        "Add Cursor Up" = "<C-k>";
+      };
     };
 
     opts = {
@@ -364,6 +368,7 @@
       plenary-nvim
       nvim-web-devicons
       nvim-treesitter-textobjects
+      vim-visual-multi
     ];
 
     extraPackages = with pkgs; [

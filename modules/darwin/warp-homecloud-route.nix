@@ -77,7 +77,11 @@ in
   # interface number.
   launchd.daemons.homecloud-warp-route = {
     serviceConfig = {
-      ProgramArguments = [ "${ensureHomecloudRoute}" ];
+      # Launch the Nix-generated script through a macOS system executable.
+      # Directly registering the script can leave launchd's lightweight code
+      # requirement invalid after a reboot and put the job in the EX_CONFIG
+      # penalty box.
+      ProgramArguments = [ "/bin/sh" "-c" "exec ${ensureHomecloudRoute}" ];
       RunAtLoad = true;
       StartInterval = 15;
       StandardOutPath = "/var/log/homecloud-warp-route.log";

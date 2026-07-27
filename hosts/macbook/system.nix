@@ -48,8 +48,8 @@
   system.defaults = {
     NSGlobalDomain = {
       _HIHideMenuBar = true;
-      InitialKeyRepeat = 10;
-      KeyRepeat = 1;
+      InitialKeyRepeat = 25;
+      KeyRepeat = 5;
     };
 
     CustomUserPreferences.".GlobalPreferences"."com.apple.mouse.scaling" = lib.mkForce (-1);
