@@ -28,8 +28,10 @@ in
 {
   imports = [
     ../common/alacritty.nix
+    ../common/kitty.nix
     ./alacritty.nix
     ./fcitx5.nix
+    ./kitty.nix
     ./desktop-ui.nix
     ./codex-gui-mcp.nix
     ./nape-pro.nix

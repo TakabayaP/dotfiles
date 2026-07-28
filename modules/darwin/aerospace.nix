@@ -53,7 +53,7 @@ let
     mode.main.binding = {
       cmd-m = [ ];
 
-      alt-enter = "exec-and-forget /usr/bin/open -na /Applications/Alacritty.app";
+      alt-enter = "exec-and-forget /usr/bin/open -na /Applications/kitty.app";
 
       alt-h = "focus --boundaries all-monitors-outer-frame left";
       alt-j = "focus --boundaries all-monitors-outer-frame down";

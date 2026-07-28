@@ -2,6 +2,9 @@
 
 Nix、nix-darwin、Home Manager で macOS と Linux の環境を管理する。
 
+標準ターミナルは Kitty。Alacritty は移行中のフォールバックとして残している。
+macOS では `Alt+Enter` で新しい Kitty ウィンドウを開く。
+
 ## macOS
 
 Apple Silicon Mac を対象としている。
@@ -153,6 +156,11 @@ agent の完了・入力待ち通知は Herdr 内に表示される。通知が�
 
 detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
 停止は `herdr server stop` を使用する。
+
+HerdrのKitty graphics対応を有効にしているため、Kittyから起動したHerdrのpane内でも
+NeovimがMarkdown中の画像とMermaid図をインライン表示できる。Mermaidの描画対象は
+Git repository内の `.md` ファイルだけで、repository外では画像生成やcache作成を
+行わない。
 
 ## `.env` ファイル
 

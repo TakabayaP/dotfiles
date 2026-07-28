@@ -14,6 +14,7 @@
     ];
     casks = [
       "alacritty"
+      "kitty"
       "nikitabobko/tap/aerospace"
       "font-hack-nerd-font"
       "macskk"
@@ -36,6 +37,8 @@
   };
 
   system.activationScripts.postActivation.text = ''
+    # Kitty is a signed Homebrew cask and has no quarantine attribute. Recursively
+    # removing attributes from its signed frameworks is rejected by macOS.
     for app in AeroSpace Alacritty; do
       if [ -d "/Applications/$app.app" ]; then
         /usr/bin/xattr -dr com.apple.quarantine "/Applications/$app.app"

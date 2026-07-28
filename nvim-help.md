@@ -7,7 +7,7 @@
 | `Cmd+S` | 手動保存 |
 
 ※ `autowriteall` が有効なため、バッファ切り替え時などに自動保存される。`Cmd+S` は明示的に保存したい場合に使う。
-※ Alacritty 経由で F18 に変換して動作。
+※ Kitty 経由で F18 に変換して動作。
 
 ## ファイル検索・コードジャンプ
 
@@ -28,7 +28,7 @@
 | `Space` → `[` | ジャンプ履歴: 戻る (同上) |
 | `Space` → `]` | ジャンプ履歴: 進む (同上) |
 
-※ `Cmd+P` / `Cmd+Shift+F` は Alacritty 経由で F13 / F14 に変換して動作。
+※ `Cmd+P` / `Cmd+Shift+F` は Kitty 経由で F13 / F14 に変換して動作。
 ※ `Cmd+[` / `Cmd+]` は F16 / F17 に変換。
 ※ Herdr 内では Kitty keyboard protocol により Shift+F1〜F8 として届くため、
   F13〜F20 へ自動変換して同じ Cmd ショートカットを利用できる。
@@ -41,7 +41,7 @@
 |---|---|
 | `Cmd+L` | ワークスペースルートからの相対パス + 行番号をクリップボードにコピー (例: `src/main.ts:42`) |
 
-※ Alacritty 経由で F15 に変換して動作。
+※ Kitty 経由で F15 に変換して動作。
 
 ## GitHub permalink
 
@@ -55,7 +55,7 @@
 |---|---|
 | `Cmd+/` | コメントアウト切替 (normal/insert/visual 対応) |
 
-※ Alacritty 経由で F20 に変換して動作。
+※ Kitty 経由で F20 に変換して動作。
 
 ## マルチカーソル (vim-visual-multi)
 
@@ -242,6 +242,49 @@ Treesitter の構文解析を利用して、関数・クラス・引数などを
 | Go | gofmt |
 | JS / TS / JSX / TSX / JSON / JSONC / CSS / HTML / YAML / Markdown | prettierd → prettier |
 
+## Markdownのリッチ表示・画像・Mermaid
+
+`.md` ファイルでは、Normalモード中にコードブロックなどを装飾表示する。Insertモードへ
+入ると生のMarkdownへ戻る。見出し、リンク、テーブルは元の記法を残して表示する。
+
+Markdownの画像記法は `image.nvim` によりバッファ内へインライン表示される。Insertモード
+中は画像を隠し、Normalモードへ戻ると再表示する。
+
+```markdown
+![説明](images/example.png)
+```
+
+Git repository内では、MermaidコードブロックもSnacksにより画像として表示する。
+Mermaid図はコードブロック上へ常時インライン表示されるため、カーソルを合わせる必要はない。
+Mermaidコードブロックだけは `render-markdown.nvim` の装飾対象から除外し、Snacksの画像表示を
+優先している。Markdown表や他の装飾には影響しない。
+Kitty直下と、Kitty graphicsを有効にしたHerdr内のNeovimに対応している。
+
+````markdown
+```mermaid
+flowchart LR
+  A[Markdown] --> B[Mermaid]
+  B --> C[Kitty image]
+```
+````
+
+通常画像の表示は `image.nvim`、Mermaid図の生成はローカルの `mmdc`、表示はSnacksの
+Kitty Graphics Protocol対応機能を使用する。
+`mmdc` は内部でChrome/Chromiumをheadless実行するが、ブラウザのウィンドウや別ターミナルは
+開かない。Git repository外では画像生成とcache作成を行わず、通常のMarkdownテキストとして
+表示する。
+
+画像記法またはMermaidコードブロックへカーソルを置いて `Space` → `i` → `p` を押すと、
+現在のwindowが画像専用bufferへ切り替わる。画像は縦横比を維持したままbufferの横幅いっぱいに
+表示し、高さが画面を超える場合は縦スクロールできる。ターミナルのサイズ変更にも追従する。
+プレビュー内で `q` を押すとbufferを閉じて、元のMarkdown bufferの表示位置へ戻る。
+
+Markdown内のインライン画像は最大160×80セル（Snacks既定値の2倍）で表示する。
+
+同じ位置で `Space` → `i` → `c` を押すと、表示対象をPNG画像としてOSのクリップボードへ
+コピーする。通常画像とMermaidの両方に対応している。Mermaidは1200px幅のviewportと
+2倍scaleで生成し、従来より高解像度のPNGをインライン表示・プレビュー・コピーで共有する。
+
 ## 診断表示 (LSP)
 
 エラー・警告がエディタ内に下線とテキストで表示される。
@@ -295,7 +338,7 @@ JS は JSDoc 形式、TS は TSDoc 形式で出力される。
 | `Ctrl+w` → `k` | ターミナルからエディタに戻る |
 | `Ctrl+w` → `j` | エディタからターミナルに移動 |
 
-※ ターミナル内では通常のシェル操作が可能。Alacritty 経由で F19 に変換して動作。
+※ ターミナル内では通常のシェル操作が可能。Kitty 経由で F19 に変換して動作。
 
 ## ステータスライン (lualine)
 
@@ -363,11 +406,11 @@ vscode.nvim (dark) を使用。背景は透過設定。
 
 ## 必要環境
 
-- **フォント**: Hack Nerd Font Mono (Alacritty で設定済み)
+- **フォント**: Hack Nerd Font Mono (Kitty で設定済み)
 - **lazygit**: Nix (extraPackages) で管理
 - **fd / ripgrep**: Nix (extraPackages) で管理
 
-## Alacritty キーマッピング一覧
+## Kitty キーマッピング一覧
 
 | Mac ショートカット | 変換先 | 用途 |
 |---|---|---|
