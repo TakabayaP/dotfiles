@@ -373,6 +373,7 @@
 
     extraPackages = with pkgs; [
       fd
+      git
       ripgrep
       prettierd
       lazygit
@@ -409,8 +410,8 @@
       { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "Window nav from terminal"; }
 
       # ファイル検索 (Telescope)
-      { mode = "n"; key = "<leader>fg"; action = "<cmd>Telescope live_grep<cr>"; options.desc = "Live Grep"; }
-      { mode = "n"; key = "<F14>"; action = "<cmd>Telescope live_grep<cr>"; options.desc = "Live Grep (Ctrl+Shift+F)"; }
+      { mode = "n"; key = "<leader>fg"; action.__raw = "function() require('custom.find-files').live_grep() end"; options.desc = "Live Grep"; }
+      { mode = "n"; key = "<F14>"; action.__raw = "function() require('custom.find-files').live_grep() end"; options.desc = "Live Grep (Ctrl+Shift+F)"; }
 
       # バッファ切り替え
       { mode = "n"; key = "gt"; action = "<cmd>BufferLineCycleNext<cr>"; options = { desc = "Next Buffer"; silent = true; }; }

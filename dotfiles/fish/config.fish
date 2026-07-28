@@ -8,3 +8,5 @@ alias vi='nvim'
 alias cat='bat --paging never'
 alias gf='git push -f'
 alias cdg='cd $(git rev-parse --show-toplevel)'
+
+set -gx EDITOR nvim

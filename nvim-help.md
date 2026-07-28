@@ -13,9 +13,9 @@
 
 | キー | 操作 |
 |---|---|
-| `Cmd+P` | ファイル検索 (キャッシュ + fs_event で自動更新) |
+| `Cmd+P` | ファイル検索 (Git repository内のみ、キャッシュ + fs_event で自動更新) |
 | `Space` → `ff` | ファイル検索 (同上) |
-| `Cmd+Shift+F` | テキスト検索 (Telescope live_grep) |
+| `Cmd+Shift+F` | テキスト検索 (Git repository内のみ、Telescope live_grep) |
 | `Space` → `fg` | テキスト検索 (同上) |
 | `gd` | 定義へジャンプ（別ファイルも可） |
 | `gi` | 実装へジャンプ (implementation) |
@@ -32,6 +32,8 @@
 ※ `Cmd+[` / `Cmd+]` は F16 / F17 に変換。
 ※ Herdr 内では Kitty keyboard protocol により Shift+F1〜F8 として届くため、
   F13〜F20 へ自動変換して同じ Cmd ショートカットを利用できる。
+※ Git repository外では起動時のfile scan・cache構築・fs watcherを行わず、
+  ファイル検索とテキスト検索も実行しない。
 
 ## コードリンクのコピー
 
