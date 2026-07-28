@@ -13,6 +13,8 @@
     pkgs.nerd-fonts.hack
   ];
 
+  home.sessionVariables.EDITOR = "nvim";
+
   programs.nh = {
     enable = true;
     flake = "${config.home.homeDirectory}/git/dotfiles";
