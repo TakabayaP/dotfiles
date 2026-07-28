@@ -3,6 +3,9 @@ let
   herdrPackage = herdr.packages.${pkgs.system}.default;
   herdrWithNvimEditor = pkgs.writeShellScriptBin "herdr" ''
     export EDITOR=nvim
+    # Herdr renders Kitty graphics locally, so let Neovim image plugins use
+    # Kitty placeholders inside managed panes.
+    export SNACKS_KITTY=true
     exec ${herdrPackage}/bin/herdr "$@"
   '';
 in
@@ -21,6 +24,10 @@ in
     [update]
     # Herdr itself is updated by changing the pinned Flake input.
     version_check = false
+
+    [experimental]
+    # Render Kitty Graphics Protocol images emitted by applications in panes.
+    kitty_graphics = true
 
     [keys]
     prefix = "ctrl+space"

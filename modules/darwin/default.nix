@@ -4,6 +4,7 @@
     ./aerospace.nix
     ./alacritty.nix
     ./keykun.nix
+    ./kitty.nix
     ./live-wallpaper.nix
     ./sketchybar.nix
   ];
