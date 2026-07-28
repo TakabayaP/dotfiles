@@ -1,7 +1,14 @@
 { pkgs, herdr, ... }:
+let
+  herdrPackage = herdr.packages.${pkgs.system}.default;
+  herdrWithNvimEditor = pkgs.writeShellScriptBin "herdr" ''
+    export EDITOR=nvim
+    exec ${herdrPackage}/bin/herdr "$@"
+  '';
+in
 {
   home.packages = [
-    herdr.packages.${pkgs.system}.default
+    herdrWithNvimEditor
   ];
 
   xdg.configFile."herdr/config.toml".text = ''
