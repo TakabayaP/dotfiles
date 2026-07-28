@@ -117,6 +117,43 @@ macOS の Accessibility 権限は TCC の仕様上、通常の Nix 設定から�
 open "$HOME/Applications/Keykun.app"
 ```
 
+## Herdr
+
+Herdr は Home Manager から全端末へインストールする。tmux はフォールバックとして
+残している。プロジェクトのディレクトリで起動し、Herdr の pane 内では tmux を介さず
+Codex などを直接起動する。
+
+```sh
+cd ~/git/dotfiles
+herdr
+```
+
+prefix は tmux と同じ `C-Space`。主なキーは以下のとおり。
+
+| 操作 | キー |
+| --- | --- |
+| 右・下に pane 分割 | `C-Space v` / `C-Space s` |
+| pane 移動 | `C-Space h/j/k/l` |
+| pane zoom 切替 | `C-Space f` |
+| 新しい tab | `C-Space c` |
+| tab 1〜9へ移動 | `C-Space 1〜9` |
+| workspace 1〜9へ移動 | `C-Space Shift+1〜9` |
+| workspace 一覧 | `C-Space w` |
+| 表示中の通知元へ移動 | `C-Space o` |
+| キー一覧 | `C-Space ?` |
+| detach | `C-Space q` |
+
+pane の分割・移動・zoom、sidebar、番号移動では prefix 後も Ctrl を離さなくてよい。
+`C-Space C-v/s`、`C-Space C-h/j/k/l`、`C-Space C-f/b`、
+`C-Space C-1〜9`、`C-Space C-Shift-1〜9` もそれぞれ同じ操作として扱われる。
+
+agent の完了・入力待ち通知は Herdr 内に表示される。通知が表示されている間に
+`C-Space o` を押すと、その workspace / tab / pane へ移動できる。Herdr 0.7.5では
+完了通知は5秒、入力待ち通知は8秒表示される。
+
+detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
+停止は `herdr server stop` を使用する。
+
 ## `.env` ファイル
 
 `settings.env` と `secrets.env` は旧 `Makefile` の Linux 向け設定であり、

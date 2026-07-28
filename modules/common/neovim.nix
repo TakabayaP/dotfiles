@@ -387,6 +387,9 @@
       { mode = "n"; key = "<C-d>"; action = "<C-d>"; options.desc = "Half-page down"; }
       { mode = "n"; key = "<C-u>"; action = "<C-u>"; options.desc = "Half-page up"; }
 
+      # 現在のwindowをzoom表示
+      { mode = "n"; key = "<C-w>f"; action.__raw = "function() Snacks.zen.zoom() end"; options.desc = "Toggle window zoom"; }
+
       # ジャンプ履歴
       { mode = "n"; key = "<leader>["; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る"; }
       { mode = "n"; key = "<leader>]"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む"; }
@@ -523,6 +526,35 @@
     extraConfigLua = ''
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
+
+      -- Alacritty sends Cmd shortcuts as F13-F20. Herdr preserves the underlying
+      -- Shift-F1..F8 identity when Neovim enables the Kitty keyboard protocol.
+      -- Remap both representations to the existing F13-F20 actions.
+      if vim.env.HERDR_ENV == "1" then
+        vim.api.nvim_create_autocmd("VimEnter", {
+          once = true,
+          callback = function()
+            vim.schedule(function()
+              local herdr_key_aliases = {
+                ["<S-F1>"] = "<F13>",
+                ["<S-F2>"] = "<F14>",
+                ["<S-F3>"] = "<F15>",
+                ["<S-F4>"] = "<F16>",
+                ["<S-F5>"] = "<F17>",
+                ["<S-F6>"] = "<F18>",
+                ["<S-F7>"] = "<F19>",
+                ["<S-F8>"] = "<F20>",
+              }
+              for source, target in pairs(herdr_key_aliases) do
+                vim.keymap.set({ "n", "i", "v", "t" }, source, target, {
+                  remap = true,
+                  silent = true,
+                })
+              end
+            end)
+          end,
+        })
+      end
 
       -- treesitter-textobjects
       require("nvim-treesitter-textobjects").setup({
