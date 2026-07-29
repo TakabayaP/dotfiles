@@ -45,10 +45,10 @@ let
 
   liveWallpaper = pkgs.stdenvNoCC.mkDerivation {
     pname = "live-wallpaper";
-    version = "1.1.0-b52c85c";
+    version = "1.1.0-b89ea8e";
 
     src = liveWallpaperSrc;
-    patches = [ ./live-wallpaper-optimizations.patch ];
+    patches = [ ./live-wallpaper-release-build.patch ];
 
     dontConfigure = true;
     dontFixup = true;

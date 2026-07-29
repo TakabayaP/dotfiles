@@ -98,17 +98,17 @@
     "liveWallpaperSrc": {
       "flake": false,
       "locked": {
-        "lastModified": 1780766901,
-        "narHash": "sha256-RQe7R0z63/JQsHMblC3A0G9CHk3a9t3+225jKP758/o=",
-        "ref": "release-build-without-previews",
-        "rev": "b52c85ce8bf826f57d073343aea25f59c29d9dd1",
-        "revCount": 20,
+        "lastModified": 1785297146,
+        "narHash": "sha256-ZhBHWy8cnClsN6rt0hoq+/yoyZHTtddhEk8HFYLZ6Ig=",
+        "ref": "main",
+        "rev": "b89ea8eca825d4687df37aca51f5ace3623141f0",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/TakabayaP/live-wallpaper.git"
       },
       "original": {
-        "ref": "release-build-without-previews",
-        "rev": "b52c85ce8bf826f57d073343aea25f59c29d9dd1",
+        "ref": "main",
+        "rev": "b89ea8eca825d4687df37aca51f5ace3623141f0",
         "type": "git",
         "url": "ssh://git@github.com/TakabayaP/live-wallpaper.git"
       }

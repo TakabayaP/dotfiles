@@ -18,7 +18,7 @@
     };
     herdr.url = "github:ogulcancelik/herdr/v0.7.5";
     liveWallpaperSrc = {
-      url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=release-build-without-previews&rev=b52c85ce8bf826f57d073343aea25f59c29d9dd1";
+      url = "git+ssh://git@github.com/TakabayaP/live-wallpaper.git?ref=main&rev=b89ea8eca825d4687df37aca51f5ace3623141f0";
       flake = false;
     };
     keykunSrc = {
