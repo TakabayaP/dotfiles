@@ -5,6 +5,7 @@
     ./herdr.nix
     ./kitty.nix
     ./neovim.nix
+    ./nvim-mcp.nix
     ./tmux.nix
   ];
 
