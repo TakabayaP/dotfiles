@@ -11,9 +11,16 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    nix-homebrew = {
+      url = "github:zhaofengli/nix-homebrew";
+      inputs.brew-src.url = "github:Homebrew/brew/6.0.13";
+    };
     nixvim = {
       url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nvim-mcp = {
+      url = "github:linw1995/nvim-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     herdr.url = "github:ogulcancelik/herdr/v0.7.5";
@@ -27,7 +34,7 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, herdr, liveWallpaperSrc, keykunSrc, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, nixvim, nvim-mcp, herdr, liveWallpaperSrc, keykunSrc, ... }:
     let
       mkDarwinConfiguration = username: nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
@@ -47,7 +54,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit username herdr liveWallpaperSrc keykunSrc; };
+            home-manager.extraSpecialArgs = { inherit username herdr nvim-mcp liveWallpaperSrc keykunSrc; };
             home-manager.users.${username} = {
               imports = [
                 nixvim.homeModules.nixvim
@@ -73,7 +80,7 @@
     homeConfigurations."takabaya@takabayap-H1-arch-i3" =
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs { system = "x86_64-linux"; };
-        extraSpecialArgs = { username = "takabaya"; inherit herdr; };
+        extraSpecialArgs = { username = "takabaya"; inherit herdr nvim-mcp; };
         modules = [
           nixvim.homeModules.nixvim
           ./hosts/takabayap-H1-arch/default.nix

@@ -285,6 +285,24 @@ Markdown内のインライン画像は最大160×80セル（Snacks既定値の2�
 コピーする。通常画像とMermaidの両方に対応している。Mermaidは1200px幅のviewportと
 2倍scaleで生成し、従来より高解像度のPNGをインライン表示・プレビュー・コピーで共有する。
 
+## Codex・Cursor CLIとの連携
+
+`nvim-mcp` はGit repository内の通常bufferを開いたNeovimだけで起動する。`$HOME` など
+Git repository外での起動や、Gitのcommit・merge・rebase用の一時bufferでは起動しない。
+
+同じGit repositoryをcwdとして起動したCodexまたはCursor CLIは、Neovimの未保存buffer、
+カーソル位置、LSP diagnostics、hover、definition、referencesなどをMCP経由で参照・操作
+できる。接続状態はそれぞれ次のコマンドで確認する。
+
+```bash
+codex mcp list
+cursor-agent mcp list
+```
+
+Nix設定の反映後はNeovimとCodex・Cursor CLIを再起動する。複数のNeovimを同じrepositoryで
+起動した場合は全instanceが候補になる。Cursor CLIの`nvim` serverは設定反映時に有効化
+される。
+
 ## 診断表示 (LSP)
 
 エラー・警告がエディタ内に下線とテキストで表示される。
