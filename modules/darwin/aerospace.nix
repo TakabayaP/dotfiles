@@ -2,7 +2,20 @@
 let
   tomlFormat = pkgs.formats.toml { };
   aerospaceConfig = {
+    config-version = 2;
     start-at-login = true;
+    persistent-workspaces = [
+      "1"
+      "2"
+      "3"
+      "4"
+      "5"
+      "6"
+      "7"
+      "8"
+      "9"
+      "10"
+    ];
 
     automatically-unhide-macos-hidden-apps = false;
     enable-normalization-flatten-containers = false;
@@ -44,6 +57,7 @@ let
 
     on-window-detected = [
       {
+        "if" = "true";
         run = "layout tiling";
       }
     ];
