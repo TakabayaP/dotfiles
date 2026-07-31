@@ -16,9 +16,15 @@ let
       leftAction = "eisu";
       rightAction = "kana";
       tapThreshold = 0.3;
-      targetModifier = "control";
+      targetModifier = "command";
     };
     slackEscape = {
+      isEnabled = true;
+    };
+    copyPaste = {
+      isEnabled = true;
+    };
+    terminalModifierSwap = {
       isEnabled = true;
     };
   });

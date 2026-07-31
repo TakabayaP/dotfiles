@@ -2,7 +2,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "keykun";
-  version = "1.4.5";
+  version = "1.6.0";
   src = keykunSrc;
 
   dontConfigure = true;

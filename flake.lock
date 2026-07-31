@@ -103,11 +103,11 @@
     "keykunSrc": {
       "flake": false,
       "locked": {
-        "lastModified": 1784366741,
-        "narHash": "sha256-NNn9ZAhK4jRITcikQOQibNqYOHKwnPyZVs5307K1z3Y=",
+        "lastModified": 1785483305,
+        "narHash": "sha256-FvQYAmKf9YFPepZQfl3/jRfoirpXBTEwUOIlGmJxqDM=",
         "owner": "TakabayaP",
         "repo": "keykun",
-        "rev": "379a183165cd9b8af94b53b1a5c6b81a4432d23c",
+        "rev": "fdd520af5a3fc3b76e0938be64cc46aa750cc8f9",
         "type": "github"
       },
       "original": {
