@@ -482,19 +482,19 @@
       # ジャンプ履歴
       { mode = "n"; key = "<leader>["; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る"; }
       { mode = "n"; key = "<leader>]"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む"; }
-      { mode = "n"; key = "<F16>"; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る (Cmd+[)"; }
-      { mode = "n"; key = "<F17>"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む (Cmd+])"; }
+      { mode = "n"; key = "<F16>"; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る (Ctrl+[)"; }
+      { mode = "n"; key = "<F17>"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む (Ctrl+])"; }
 
-      # 保存 (Cmd+S)
-      { mode = [ "n" "i" ]; key = "<F18>"; action = "<cmd>w<cr>"; options.desc = "保存 (Cmd+S)"; }
+      # 保存 (Ctrl+S)
+      { mode = [ "n" "i" ]; key = "<F18>"; action = "<cmd>w<cr>"; options.desc = "保存 (Ctrl+S)"; }
 
-      # コメントアウト (Cmd+/)
-      { mode = "n"; key = "<F20>"; action = "gcc"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
-      { mode = "v"; key = "<F20>"; action = "gc"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
-      { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
+      # コメントアウト (Ctrl+/)
+      { mode = "n"; key = "<F20>"; action = "gcc"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
+      { mode = "v"; key = "<F20>"; action = "gc"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
+      { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
 
       # ターミナル
-      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Cmd+J)"; }
+      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Ctrl+J)"; }
       { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "Window nav from terminal"; }
 
       # ファイル検索 (Telescope)
@@ -578,7 +578,7 @@
 
       # コードリンクコピー
       {
-        mode = "n"; key = "<F15>"; options.desc = "Copy code link (Cmd+L)";
+        mode = "n"; key = "<F15>"; options.desc = "Copy code link (Ctrl+L)";
         action.__raw = ''
           function()
             local filepath = vim.fn.expand('%:.')
@@ -632,7 +632,7 @@
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
 
-      -- The terminal sends Cmd shortcuts as F13-F20. Herdr preserves the underlying
+      -- The terminal sends Ctrl shortcuts as F13-F20. Herdr preserves the underlying
       -- Shift-F1..F8 identity when Neovim enables the Kitty keyboard protocol.
       -- Remap both representations to the existing F13-F20 actions.
       if vim.env.HERDR_ENV == "1" then
