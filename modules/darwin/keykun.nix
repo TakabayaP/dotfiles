@@ -16,7 +16,7 @@ let
       leftAction = "eisu";
       rightAction = "kana";
       tapThreshold = 0.3;
-      targetModifier = "command";
+      targetModifier = "control";
     };
     slackEscape = {
       isEnabled = true;
@@ -26,6 +26,9 @@ let
     };
     terminalModifierSwap = {
       isEnabled = true;
+    };
+    commandShortcuts = {
+      disableHide = true;
     };
   });
 

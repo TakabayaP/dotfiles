@@ -8,6 +8,7 @@ let
     export SNACKS_KITTY=true
     exec ${herdrPackage}/bin/herdr "$@"
   '';
+  heldPrefixModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
 in
 {
   home.packages = [
@@ -59,22 +60,23 @@ in
     # prefix+s is used for a horizontal split, as in the tmux config.
     settings = "prefix+shift+s"
 
-    split_vertical = ["prefix+v", "prefix+ctrl+v"]
-    split_horizontal = ["prefix+s", "prefix+ctrl+s"]
+    # Treat holding the physical prefix modifier through the action key as
+    # equivalent to releasing it after prefix. Keykun makes that modifier
+    # Command on macOS terminals; Linux uses Alt as the prefix modifier.
+    split_vertical = ["prefix+v", "prefix+${heldPrefixModifier}+v"]
+    split_horizontal = ["prefix+s", "prefix+${heldPrefixModifier}+s"]
 
-    # Keep the Ctrl-modified aliases as well. Command-modified action keys
-    # conflict with existing macOS shortcuts such as Cmd+H.
-    focus_pane_left = ["prefix+h", "prefix+ctrl+h"]
-    focus_pane_down = ["prefix+j", "prefix+ctrl+j"]
-    focus_pane_up = ["prefix+k", "prefix+ctrl+k"]
-    focus_pane_right = ["prefix+l", "prefix+ctrl+l"]
+    focus_pane_left = ["prefix+h", "prefix+${heldPrefixModifier}+h"]
+    focus_pane_down = ["prefix+j", "prefix+${heldPrefixModifier}+j"]
+    focus_pane_up = ["prefix+k", "prefix+${heldPrefixModifier}+k"]
+    focus_pane_right = ["prefix+l", "prefix+${heldPrefixModifier}+l"]
 
     new_tab = "prefix+c"
-    switch_tab = ["prefix+1..9", "prefix+ctrl+1..9"]
-    switch_workspace = ["prefix+shift+1..9", "prefix+ctrl+shift+1..9"]
+    switch_tab = ["prefix+1..9", "prefix+${heldPrefixModifier}+1..9"]
+    switch_workspace = ["prefix+shift+1..9", "prefix+${heldPrefixModifier}+shift+1..9"]
     open_notification_target = "prefix+o"
-    zoom = ["prefix+f", "prefix+ctrl+f"]
-    toggle_sidebar = ["prefix+b", "prefix+ctrl+b"]
+    zoom = ["prefix+f", "prefix+${heldPrefixModifier}+f"]
+    toggle_sidebar = ["prefix+b", "prefix+${heldPrefixModifier}+b"]
 
     [ui]
     mouse_capture = true
