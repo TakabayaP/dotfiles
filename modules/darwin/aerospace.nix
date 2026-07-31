@@ -67,7 +67,10 @@ let
     mode.main.binding = {
       cmd-m = [ ];
 
-      alt-enter = "exec-and-forget /usr/bin/open -na /Applications/kitty.app";
+      # Kitty launched from a Herdr pane would otherwise inherit HERDR_ENV and
+      # be treated as another Herdr instance. Start it with the Herdr runtime
+      # variables removed so it remains an outer terminal.
+      alt-enter = "exec-and-forget /usr/bin/env -u HERDR_ENV -u HERDR_SOCKET_PATH -u HERDR_BIN_PATH -u HERDR_STARTUP_CWD -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID -u HERDR_PANE_ID /usr/bin/open -na /Applications/kitty.app";
 
       alt-h = "focus --boundaries all-monitors-outer-frame left";
       alt-j = "focus --boundaries all-monitors-outer-frame down";

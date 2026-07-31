@@ -15,6 +15,16 @@
     pkgs.nerd-fonts.hack
   ];
 
+  programs.btop = {
+    enable = true;
+    settings = {
+      # Preserve the existing preference: update the top process immediately
+      # instead of smoothing CPU sort changes over time.
+      proc_sorting = "cpu direct";
+      theme_background = false;
+    };
+  };
+
   home.sessionVariables = {
     EDITOR = "nvim";
     TERMINAL = "kitty";
