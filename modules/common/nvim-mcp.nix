@@ -121,6 +121,7 @@ in
 
   home.activation.syncNvimMcpClients =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD ${syncNvimMcpClients}/bin/sync-nvim-mcp-clients
+      PATH="${pkgs.nodejs}/bin:$PATH" \
+        $DRY_RUN_CMD ${syncNvimMcpClients}/bin/sync-nvim-mcp-clients
     '';
 }
