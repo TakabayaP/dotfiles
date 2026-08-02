@@ -35,6 +35,7 @@ in
     ./desktop-ui.nix
     ./codex-gui-mcp.nix
     ./nape-pro.nix
+    ./waybar.nix
   ];
 
   home.packages = [
