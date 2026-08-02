@@ -49,7 +49,7 @@ let
       # sticky across workspaces, and outside task switching.
       # WID is supplied by xwinwrap to mpv for the embedded desktop window.
       exec xwinwrap -fs -st -sp -ni -b -nf -- \
-        mpv --wid=WID "''${mpv_options[@]}" "$video"
+        mpv -wid WID --vo=x11 "''${mpv_options[@]}" "$video"
     '';
   };
 in
