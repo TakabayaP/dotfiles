@@ -1,5 +1,7 @@
 { lib, pkgs, ... }:
 let
+  polybarPackage = pkgs.polybarFull;
+
   fcitxStatus = pkgs.writeShellApplication {
     name = "polybar-ime";
     runtimeInputs = [ pkgs.qt6Packages.fcitx5-with-addons ];
@@ -198,7 +200,7 @@ let
   startPolybar = pkgs.writeShellApplication {
     name = "start-polybar";
     runtimeInputs = [
-      pkgs.polybar
+      polybarPackage
       pkgs.procps
     ];
     text = ''
@@ -209,7 +211,7 @@ let
 in
 {
   home.packages = [
-    pkgs.polybar
+    polybarPackage
     pkgs.pavucontrol
     startPolybar
   ];
