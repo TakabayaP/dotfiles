@@ -29,6 +29,7 @@ in
   imports = [
     ../common/alacritty.nix
     ../common/kitty.nix
+    ./arch-packages.nix
     ./alacritty.nix
     ./fcitx5.nix
     ./kitty.nix

@@ -157,6 +157,21 @@ agent の完了・入力待ち通知は Herdr 内に表示される。通知が�
 detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
 停止は `herdr server stop` を使用する。
 
+## Linux (Arch)
+
+Home Manager は Nix のパッケージとユーザー設定を管理し、Arch の pacman データベースや
+`/usr` のシステムパッケージは管理しない。host 側の glibc/NVIDIA ドライバと同じ環境で
+動かす必要があるパッケージは、Nix が生成する一覧で確認できる。
+
+```sh
+cat ~/.config/dotfiles/arch-packages.txt
+sync-arch-packages
+```
+
+`sync-arch-packages` は Home Manager の適用時には実行されず、ユーザーが明示的に実行した
+ときだけ `sudo pacman -S --needed` を呼び出す。現在の一覧には、NVIDIA GPU 経路で使う
+host 版 `mpv` が含まれている。
+
 HerdrのKitty graphics対応を有効にしているため、Kittyから起動したHerdrのpane内でも
 NeovimがMarkdown中の画像とMermaid図をインライン表示できる。Mermaidの描画対象は
 Git repository内の `.md` ファイルだけで、repository外では画像生成やcache作成を
