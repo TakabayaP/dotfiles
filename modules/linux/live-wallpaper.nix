@@ -54,6 +54,29 @@ let
         exit 1
       fi
 
+      # Nix's mpv does not automatically see Arch's host NVIDIA GLVND
+      # libraries. Without these paths, --hwdec=auto falls back to software
+      # decoding. Use the GPU-backed X11 output and NVDEC when the host has
+      # the NVIDIA runtime installed, while retaining a generic X11 fallback.
+      x11_mpv_options=(--vo=x11)
+      if [ -f /usr/share/glvnd/egl_vendor.d/10_nvidia.json ] \
+        && [ -f /usr/lib/libEGL_nvidia.so.0 ] \
+        && [ -f /usr/lib/libcuda.so.1 ] \
+        && [ -f /usr/lib/libnvcuvid.so.1 ]; then
+        export LD_LIBRARY_PATH="/usr/lib:/usr/lib/nvidia''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+        export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        if [ -f /usr/share/vulkan/icd.d/nvidia_icd.json ]; then
+          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json
+        fi
+        x11_mpv_options=(
+          --vo=gpu
+          --gpu-context=x11egl
+          --gpu-api=opengl
+          --hwdec=nvdec
+        )
+      fi
+
       # i3 uses X11 on this host. Start one override-redirect background per
       # monitor so landscape and portrait displays each get a fully covered
       # canvas. The below/sticky flags keep them behind normal windows.
@@ -65,7 +88,7 @@ let
       if [ "''${#monitor_geometries[@]}" -eq 0 ]; then
         # Keep a useful fallback for X11 sessions without xrandr output.
         exec xwinwrap -fs -st -sp -ni -b -nf -ov -- \
-          mpv -wid WID --vo=x11 "''${mpv_options[@]}" "$video"
+          mpv -wid WID "''${mpv_options[@]}" "''${x11_mpv_options[@]}" "$video"
       fi
 
       for geometry in "''${monitor_geometries[@]}"; do
@@ -79,7 +102,7 @@ let
         fi
 
         xwinwrap -g "$geometry" -st -sp -ni -b -nf -ov -- \
-          mpv -wid WID --vo=x11 "''${mpv_options[@]}" "$monitor_video" &
+          mpv -wid WID "''${mpv_options[@]}" "''${x11_mpv_options[@]}" "$monitor_video" &
       done
       wait
     '';
