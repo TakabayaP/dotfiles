@@ -170,7 +170,7 @@ sync-arch-packages
 
 `sync-arch-packages` は Home Manager の適用時には実行されず、ユーザーが明示的に実行した
 ときだけ `sudo pacman -S --needed` を呼び出す。現在の一覧には、NVIDIA GPU 経路で使う
-host 版 `mpv` が含まれている。
+host 版 `kitty` と `mpv` が含まれている。
 
 HerdrのKitty graphics対応を有効にしているため、Kittyから起動したHerdrのpane内でも
 NeovimがMarkdown中の画像とMermaid図をインライン表示できる。Mermaidの描画対象は

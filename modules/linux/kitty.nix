@@ -1,5 +1,9 @@
 { ... }:
 {
+  # On Arch, use the pacman kitty so its GLFW/GLVND stack stays aligned with
+  # the host X11 and NVIDIA driver. Home Manager still owns kitty.conf.
+  programs.kitty.package = null;
+
   programs.kitty.keybindings = {
     "ctrl+p" = "send_text all \\e[1;2P";
     "shift+ctrl+f" = "send_text all \\e[1;2Q";
