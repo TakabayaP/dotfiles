@@ -83,6 +83,7 @@ let
     [bar/sketchybar]
     width = 100%
     height = 38
+    monitor = ''${env:MONITOR:}
     offset-x = 8
     offset-y = 6
     radius = 5
@@ -201,11 +202,24 @@ let
     name = "start-polybar";
     runtimeInputs = [
       polybarPackage
+      pkgs.coreutils
       pkgs.procps
     ];
     text = ''
-      pkill -x polybar 2>/dev/null || true
-      exec polybar --config=${polybarConfig} --reload sketchybar
+      # Nix wraps Polybar, so its process name is not literally "polybar".
+      # Match this managed config path to avoid accumulating bars on reload.
+      pkill -TERM -f -- "${polybarPackage}/bin/polybar.*${polybarConfig}" 2>/dev/null || true
+      sleep 0.2
+
+      mapfile -t monitors < <(polybar --list-monitors 2>/dev/null | cut -d: -f1)
+      if [ "''${#monitors[@]}" -eq 0 ]; then
+        exec polybar --config=${polybarConfig} --reload sketchybar
+      fi
+
+      for monitor in "''${monitors[@]}"; do
+        MONITOR="$monitor" polybar --config=${polybarConfig} --reload sketchybar &
+      done
+      wait
     '';
   };
 in
