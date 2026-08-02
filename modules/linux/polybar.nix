@@ -208,7 +208,7 @@ let
     text = ''
       # Nix wraps Polybar, so its process name is not literally "polybar".
       # Match this managed config path to avoid accumulating bars on reload.
-      pkill -TERM -f -- "${polybarPackage}/bin/polybar.*${polybarConfig}" 2>/dev/null || true
+      pkill -TERM -f -- 'polybar --config=/nix/store/[^ ]*-polybar-config[.]ini' 2>/dev/null || true
       sleep 0.2
 
       mapfile -t monitors < <(polybar --list-monitors 2>/dev/null | cut -d: -f1)
