@@ -35,7 +35,7 @@ in
     ./desktop-ui.nix
     ./codex-gui-mcp.nix
     ./nape-pro.nix
-    ./waybar.nix
+    ./polybar.nix
     ./live-wallpaper.nix
   ];
 
