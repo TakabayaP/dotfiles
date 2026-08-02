@@ -33,7 +33,7 @@
   # automatically configures its upstream remote.
   programs.git = {
     enable = true;
-    extraConfig.push.autoSetupRemote = true;
+    settings.push.autoSetupRemote = true;
   };
 
   home.sessionVariables = {
