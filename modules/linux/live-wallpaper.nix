@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
   defaultVideo = "${config.home.homeDirectory}/Videos/live-wallpaper.mp4";
+  downloadsVideo = "${config.home.homeDirectory}/Downloads/live_wallpaper.mov";
 
   linuxLiveWallpaper = pkgs.writeShellApplication {
     name = "linux-live-wallpaper";
@@ -10,10 +11,18 @@ let
       pkgs.xwinwrap
     ];
     text = ''
-      video="''${LIVE_WALLPAPER_VIDEO:-${defaultVideo}}"
+      video="''${LIVE_WALLPAPER_VIDEO:-}"
 
-      if [ ! -f "$video" ]; then
-        echo "linux-live-wallpaper: video not found; set LIVE_WALLPAPER_VIDEO or add $video" >&2
+      if [ -z "$video" ]; then
+        if [ -f "${defaultVideo}" ]; then
+          video="${defaultVideo}"
+        elif [ -f "${downloadsVideo}" ]; then
+          video="${downloadsVideo}"
+        fi
+      fi
+
+      if [ -z "$video" ] || [ ! -f "$video" ]; then
+        echo "linux-live-wallpaper: video not found; add ${defaultVideo}, ${downloadsVideo}, or set LIVE_WALLPAPER_VIDEO" >&2
         exit 0
       fi
 
@@ -46,7 +55,6 @@ let
 in
 {
   home.packages = [ linuxLiveWallpaper ];
-  home.sessionVariables.LIVE_WALLPAPER_VIDEO = defaultVideo;
 
   systemd.user.services.live-wallpaper = {
     Unit = {

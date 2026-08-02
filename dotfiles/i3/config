@@ -189,16 +189,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-	position top
-        status_command i3status
-}
-
-# toggle bar to maximize window size
-bindsym $mod+p bar mode toggle
-
 # remove border from window
 for_window [class="^.*"] border pixel 0
 new_window 1pixel
