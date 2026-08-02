@@ -1,8 +1,18 @@
-{ ... }:
+{ pkgs, ... }:
+let
+  hostKitty = pkgs.writeShellScriptBin "kitty" ''
+    export GLFW_IM_MODULE=ibus
+    exec /usr/bin/kitty "$@"
+  '';
+in
 {
   # On Arch, use the pacman kitty so its GLFW/GLVND stack stays aligned with
-  # the host X11 and NVIDIA driver. Home Manager still owns kitty.conf.
+  # the host X11 and NVIDIA driver. The wrapper enables kitty's IBus frontend,
+  # which connects to Fcitx5 without replacing the host kitty binary.
   programs.kitty.package = null;
+
+  home.packages = [ hostKitty ];
+  home.sessionVariables.GLFW_IM_MODULE = "ibus";
 
   programs.kitty.keybindings = {
     "ctrl+p" = "send_text all \\e[1;2P";
