@@ -8,12 +8,32 @@ let
     export SNACKS_KITTY=true
     exec ${herdrPackage}/bin/herdr "$@"
   '';
+  ghBrowserExecutable =
+    if pkgs.stdenv.isDarwin
+    then "/usr/bin/open"
+    else "${pkgs.xdg-utils}/bin/xdg-open";
+  ghBrowser = pkgs.writeShellScriptBin "gh-browser" ''
+    set -euo pipefail
+
+    if [ "$#" -ne 1 ]; then
+      echo "gh-browser: expected exactly one URL" >&2
+      exit 2
+    fi
+
+    exec ${ghBrowserExecutable} "$1"
+  '';
   heldPrefixModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
 in
 {
   home.packages = [
     herdrWithNvimEditor
+    ghBrowser
   ];
+
+  # gh pr create --web honors GH_BROWSER. The wrapper keeps that command
+  # working inside Herdr panes, where the shell's browser lookup can otherwise
+  # differ from the desktop session.
+  home.sessionVariables.GH_BROWSER = "${ghBrowser}/bin/gh-browser";
 
   # Keep the Herdr skill available to both Codex CLI and Cursor CLI. Copy the
   # pinned source instead of linking into the Nix store so CLI skill discovery
