@@ -12,7 +12,6 @@ in
   programs.kitty.package = null;
 
   home.packages = [ hostKitty ];
-  home.sessionVariables.GLFW_IM_MODULE = "ibus";
 
   programs.kitty.keybindings = {
     "ctrl+p" = "send_text all \\e[1;2P";

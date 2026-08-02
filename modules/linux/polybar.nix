@@ -1,6 +1,41 @@
 { lib, pkgs, ... }:
 let
   polybarPackage = pkgs.polybarFull;
+  sparklineShell = ''
+    spark_chars=(▁ ▂ ▃ ▄ ▅ ▆ ▇ █)
+    history_values=(0 0 0 0 0 0 0 0 0 0 0 0)
+
+    render_sparkline() {
+      local min_value="''${history_values[0]}"
+      local max_value="''${history_values[0]}"
+      local value
+      local level
+      local range
+      local output=""
+
+      for value in "''${history_values[@]}"; do
+        [ "$value" -lt "$min_value" ] && min_value="$value"
+        [ "$value" -gt "$max_value" ] && max_value="$value"
+      done
+
+      range=$((max_value - min_value))
+      for value in "''${history_values[@]}"; do
+        level=0
+        if [ "$range" -gt 0 ]; then
+          level=$((7 * (value - min_value) / range))
+        fi
+        output="''${output}''${spark_chars[level]}"
+      done
+      printf '%s' "$output"
+    }
+
+    append_sample() {
+      history_values+=("$1")
+      if [ "''${#history_values[@]}" -gt 12 ]; then
+        history_values=("''${history_values[@]: -12}")
+      fi
+    }
+  '';
 
   workspaceStatus = pkgs.writeShellApplication {
     name = "polybar-workspaces";
@@ -42,8 +77,7 @@ let
       pkgs.gawk
     ];
     text = ''
-      spark_chars=(▁ ▂ ▃ ▄ ▅ ▆ ▇ █)
-      history="▁▁▁▁▁▁▁▁▁▁▁▁"
+      ${sparklineShell}
 
       cpu_stats() {
         awk '/^cpu / { idle=$5+$6; total=0; for (i=2; i<=NF; i++) total += $i; print idle, total; exit }' /proc/stat
@@ -52,7 +86,7 @@ let
       previous_idle=0
       previous_total=0
       read -r previous_idle previous_total < <(cpu_stats)
-      printf 'CPU %s 0%%\n' "$history"
+      printf 'CPU %s 0%%\n' "$(render_sparkline)"
 
       while true; do
         sleep 3
@@ -65,20 +99,17 @@ let
 
         total_delta=$((total - previous_total))
         idle_delta=$((idle - previous_idle))
-        usage=0
+        usage_basis_points=0
         if [ "$total_delta" -gt 0 ]; then
-          usage=$((100 * (total_delta - idle_delta) / total_delta))
+          usage_basis_points=$((10000 * (total_delta - idle_delta) / total_delta))
         fi
-        [ "$usage" -lt 0 ] && usage=0
-        [ "$usage" -gt 100 ] && usage=100
+        [ "$usage_basis_points" -lt 0 ] && usage_basis_points=0
+        [ "$usage_basis_points" -gt 10000 ] && usage_basis_points=10000
+        usage=$((usage_basis_points / 100))
 
-        level=$((usage * 7 / 100))
-        history="''${history}''${spark_chars[level]}"
-        if [ "''${#history}" -gt 12 ]; then
-          history="''${history: -12}"
-        fi
+        append_sample "$usage_basis_points"
 
-        printf 'CPU %s %3d%%\n' "$history" "$usage"
+        printf 'CPU %s %3d%%\n' "$(render_sparkline)" "$usage"
         previous_idle="$idle"
         previous_total="$total"
       done
@@ -92,14 +123,13 @@ let
       pkgs.gawk
     ];
     text = ''
-      spark_chars=(▁ ▂ ▃ ▄ ▅ ▆ ▇ █)
-      history="▁▁▁▁▁▁▁▁▁▁▁▁"
+      ${sparklineShell}
 
       memory_stats() {
         awk '/MemTotal:/ { total=$2 } /MemAvailable:/ { available=$2 } END { if (total > 0) print total-available, total }' /proc/meminfo
       }
 
-      printf 'MEM %s 0%%\n' "$history"
+      printf 'MEM %s 0%%\n' "$(render_sparkline)"
 
       while true; do
         sleep 3
@@ -110,17 +140,14 @@ let
           continue
         fi
 
-        usage=$((100 * used / total))
-        [ "$usage" -lt 0 ] && usage=0
-        [ "$usage" -gt 100 ] && usage=100
+        usage_basis_points=$((10000 * used / total))
+        [ "$usage_basis_points" -lt 0 ] && usage_basis_points=0
+        [ "$usage_basis_points" -gt 10000 ] && usage_basis_points=10000
+        usage=$((usage_basis_points / 100))
 
-        level=$((usage * 7 / 100))
-        history="''${history}''${spark_chars[level]}"
-        if [ "''${#history}" -gt 12 ]; then
-          history="''${history: -12}"
-        fi
+        append_sample "$usage_basis_points"
 
-        printf 'MEM %s %3d%%\n' "$history" "$usage"
+        printf 'MEM %s %3d%%\n' "$(render_sparkline)" "$usage"
       done
     '';
   };

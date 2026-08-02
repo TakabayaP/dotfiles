@@ -10,8 +10,6 @@ let
     runtimeInputs = [
       pkgs.coreutils
       pkgs.gnused
-      pkgs.mpv
-      pkgs.mpvpaper
       pkgs.xwinwrap
       pkgs.xrandr
     ];
@@ -23,6 +21,8 @@ let
           video="${defaultVideo}"
         elif [ -f "${optimizedDownloadsVideo}" ]; then
           video="${optimizedDownloadsVideo}"
+        elif [ -f "${optimizedLowResDownloadsVideo}" ]; then
+          video="${optimizedLowResDownloadsVideo}"
         elif [ -f "${downloadsVideo}" ]; then
           video="${downloadsVideo}"
         fi
@@ -33,57 +33,29 @@ let
         exit 0
       fi
 
+      if [ -z "''${DISPLAY:-}" ]; then
+        echo "linux-live-wallpaper: X11 DISPLAY is not available" >&2
+        exit 1
+      fi
+
+      if [ ! -x /usr/bin/mpv ]; then
+        echo "linux-live-wallpaper: required host player /usr/bin/mpv was not found" >&2
+        exit 78
+      fi
+
       mpv_options=(
         --no-audio
         --loop-file=inf
         --no-osc
         --no-input-default-bindings
         --really-quiet
-        --hwdec=auto
         --keepaspect=yes
         --panscan=1.0
+        --vo=gpu
+        --gpu-context=x11egl
+        --gpu-api=opengl
+        --hwdec=nvdec
       )
-      mpvpaper_options="''${mpv_options[*]}"
-
-      if [ -n "''${WAYLAND_DISPLAY:-}" ]; then
-        exec mpvpaper -o "$mpvpaper_options" '*' "$video"
-      fi
-
-      if [ -z "''${DISPLAY:-}" ]; then
-        echo "linux-live-wallpaper: neither Wayland nor X11 is available" >&2
-        exit 1
-      fi
-
-      # Arch's NVIDIA driver and Nix's mpv can have incompatible glibc ABIs.
-      # Prefer a host mpv for the GPU path so it shares the host driver ABI;
-      # when it is not installed, keep xwinwrap and Nix mpv in their native
-      # library environment and use a safe X11 fallback.
-      x11_mpv_options=(--vo=x11)
-      mpv_command=(mpv)
-      host_mpv=""
-      for candidate in /usr/bin/mpv /usr/local/bin/mpv; do
-        if [ -x "$candidate" ]; then
-          host_mpv="$candidate"
-          break
-        fi
-      done
-
-      if [ -n "$host_mpv" ]; then
-        mpv_command=("$host_mpv")
-        if [ -f /usr/share/glvnd/egl_vendor.d/10_nvidia.json ] \
-          && [ -f /usr/lib/libEGL_nvidia.so.0 ] \
-          && [ -f /usr/lib/libcuda.so.1 ] \
-          && [ -f /usr/lib/libnvcuvid.so.1 ]; then
-          x11_mpv_options=(
-            --vo=gpu
-            --gpu-context=x11egl
-            --gpu-api=opengl
-            --hwdec=nvdec
-          )
-        fi
-      else
-        echo "linux-live-wallpaper: host mpv not found; using Nix mpv with X11 output" >&2
-      fi
 
       # i3 uses X11 on this host. Start one override-redirect background per
       # monitor so landscape and portrait displays each get a fully covered
@@ -96,8 +68,27 @@ let
       if [ "''${#monitor_geometries[@]}" -eq 0 ]; then
         # Keep a useful fallback for X11 sessions without xrandr output.
         exec xwinwrap -fs -st -sp -ni -b -nf -ov -- \
-          "''${mpv_command[@]}" -wid WID "''${mpv_options[@]}" "''${x11_mpv_options[@]}" "$video"
+          /usr/bin/mpv -wid WID "''${mpv_options[@]}" "$video"
       fi
+
+      pids=()
+      # Invoked indirectly by the EXIT trap below.
+      # shellcheck disable=SC2329
+      cleanup_children() {
+        local exit_status="$?"
+        trap - EXIT INT TERM
+
+        for pid in "''${pids[@]}"; do
+          kill "$pid" >/dev/null 2>&1 || true
+        done
+        for pid in "''${pids[@]}"; do
+          wait "$pid" >/dev/null 2>&1 || true
+        done
+
+        exit "$exit_status"
+      }
+      trap cleanup_children EXIT
+      trap 'exit 0' INT TERM
 
       for geometry in "''${monitor_geometries[@]}"; do
         monitor_video="$video"
@@ -110,9 +101,18 @@ let
         fi
 
         xwinwrap -g "$geometry" -st -sp -ni -b -nf -ov -- \
-          "''${mpv_command[@]}" -wid WID "''${mpv_options[@]}" "''${x11_mpv_options[@]}" "$monitor_video" &
+          /usr/bin/mpv -wid WID "''${mpv_options[@]}" "$monitor_video" &
+        pids+=("$!")
       done
-      wait
+
+      if wait -n "''${pids[@]}"; then
+        echo "linux-live-wallpaper: an xwinwrap child exited unexpectedly" >&2
+        exit 1
+      else
+        child_status="$?"
+        echo "linux-live-wallpaper: an xwinwrap child exited with status $child_status" >&2
+        exit "$child_status"
+      fi
     '';
   };
 in
@@ -129,6 +129,7 @@ in
     Service = {
       ExecStart = "${linuxLiveWallpaper}/bin/linux-live-wallpaper";
       Restart = "on-failure";
+      RestartPreventExitStatus = 78;
       RestartSec = 5;
     };
 
