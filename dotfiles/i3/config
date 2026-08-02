@@ -55,6 +55,9 @@ floating_modifier $mod
 # start kitty
 bindsym $mod+Return exec kitty
 
+# Toggle the unified Polybar and its system tray on all monitors.
+bindsym $mod+p exec --no-startup-id toggle-polybar
+
 # kill focused window
 bindsym $mod+Shift+q kill
 

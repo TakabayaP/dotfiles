@@ -228,7 +228,68 @@ let
     '';
   };
 
-  polybarConfig = pkgs.writeText "polybar-config.ini" ''
+  wallpaperControl = pkgs.writeShellApplication {
+    name = "toggle-live-wallpaper";
+    runtimeInputs = [ pkgs.systemd ];
+    text = ''
+      action="''${1:-toggle}"
+
+      case "$action" in
+        on|start)
+          exec systemctl --user start live-wallpaper.service
+          ;;
+        off|stop)
+          exec systemctl --user stop live-wallpaper.service
+          ;;
+        toggle)
+          if systemctl --user is-active --quiet live-wallpaper.service; then
+            exec systemctl --user stop live-wallpaper.service
+          else
+            exec systemctl --user start live-wallpaper.service
+          fi
+          ;;
+        status)
+          if systemctl --user is-active --quiet live-wallpaper.service; then
+            printf 'on\n'
+          else
+            printf 'off\n'
+          fi
+          ;;
+        *)
+          echo "usage: toggle-live-wallpaper [on|off|toggle|status]" >&2
+          exit 2
+          ;;
+      esac
+    '';
+  };
+
+  liveWallpaperStatus = pkgs.writeShellApplication {
+    name = "polybar-live-wallpaper";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      while true; do
+        if [ "$(${wallpaperControl}/bin/toggle-live-wallpaper status)" = "on" ]; then
+          printf 'LIVE\n'
+        else
+          printf 'OFF\n'
+        fi
+        sleep 2
+      done
+    '';
+  };
+
+  togglePolybar = pkgs.writeShellApplication {
+    name = "toggle-polybar";
+    runtimeInputs = [ polybarPackage ];
+    text = ''
+      exec polybar-msg cmd toggle
+    '';
+  };
+
+  polybarConfig = tray:
+    pkgs.writeText
+      (if tray then "polybar-config-with-tray.ini" else "polybar-config.ini")
+      ''
     [colors]
     background = #cc1e1e2e
     module-background = #cc313244
@@ -258,11 +319,7 @@ let
     font-1 = Hack Nerd Font:style=Bold:size=11;2
     modules-left = workspaces
     modules-center = date
-    modules-right = battery ime pulseaudio cpu memory vram
-    tray-position = right
-    tray-padding = 4
-    tray-maxsize = 14
-    tray-background = ''${colors.module-background}
+    modules-right = battery ime live-wallpaper pulseaudio cpu memory vram${if tray then " tray" else ""}
     wm-restack = i3
     enable-ipc = true
     cursor-click = pointer
@@ -322,6 +379,26 @@ let
     label-muted = 󰝟 muted
     click-right = ${pkgs.pavucontrol}/bin/pavucontrol
 
+    [module/live-wallpaper]
+    type = custom/script
+    exec = ${liveWallpaperStatus}/bin/polybar-live-wallpaper
+    tail = true
+    format = <label>
+    format-background = ''${colors.module-background}
+    format-foreground = ''${colors.yellow}
+    format-padding = 0
+    label = 󰸉 %output%
+    click-left = ${wallpaperControl}/bin/toggle-live-wallpaper toggle
+    click-right = ${wallpaperControl}/bin/toggle-live-wallpaper off
+
+    [module/tray]
+    type = internal/tray
+    format = <tray>
+    format-background = ''${colors.module-background}
+    format-padding = 0
+    tray-spacing = 4px
+    tray-size = 100%
+
     [module/cpu]
     type = custom/script
     exec = ${cpuStatus}/bin/polybar-cpu
@@ -353,6 +430,9 @@ let
     label = %output%
   '';
 
+  polybarConfigWithTray = polybarConfig true;
+  polybarConfigWithoutTray = polybarConfig false;
+
   startPolybar = pkgs.writeShellApplication {
     name = "start-polybar";
     runtimeInputs = [
@@ -363,16 +443,23 @@ let
     text = ''
       # Nix wraps Polybar, so its process name is not literally "polybar".
       # Match this managed config path to avoid accumulating bars on reload.
-      pkill -TERM -f -- 'polybar --config=/nix/store/[^ ]*-polybar-config[.]ini' 2>/dev/null || true
+      pkill -TERM -f -- 'polybar --config=/nix/store/[^ ]*polybar-config[^ ]*[.]ini' 2>/dev/null || true
       sleep 0.2
 
       mapfile -t monitors < <(polybar --list-monitors 2>/dev/null | cut -d: -f1)
       if [ "''${#monitors[@]}" -eq 0 ]; then
-        exec polybar --config=${polybarConfig} --reload sketchybar
+        exec polybar --config=${polybarConfigWithTray} --reload sketchybar
       fi
 
+      first_monitor=true
       for monitor in "''${monitors[@]}"; do
-        MONITOR="$monitor" polybar --config=${polybarConfig} --reload sketchybar &
+        if [ "$first_monitor" = true ]; then
+          config=${polybarConfigWithTray}
+          first_monitor=false
+        else
+          config=${polybarConfigWithoutTray}
+        fi
+        MONITOR="$monitor" polybar --config="$config" --reload sketchybar &
       done
       wait
     '';
@@ -382,6 +469,8 @@ in
   home.packages = [
     polybarPackage
     pkgs.pavucontrol
+    wallpaperControl
+    togglePolybar
     startPolybar
   ];
 
