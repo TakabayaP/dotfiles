@@ -44,9 +44,7 @@ EnumerateSkipFirst=False
 
 [Behavior]
 # Active By Default
-# Keep SKK available so Ctrl+J can switch from Latin to Hiragana without
-# requiring a separate Fcitx activation key first.
-ActiveByDefault=True
+ActiveByDefault=False
 # Reset state on Focus In
 resetStateWhenFocusIn=No
 # Share Input State

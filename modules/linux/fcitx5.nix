@@ -27,47 +27,51 @@ let
   customKeymaps = {
     default = {
       include = [ "default/default" ];
-      define.keymap."\\" = null;
+      define.keymap = {
+        "\\" = null;
+        "C-j" = null;
+        "A-j" = "set-input-mode-hiragana";
+      };
     };
     hiragana = {
       include = [ "default/hiragana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = "commit";
+        "C-j" = null;
         "A-q" = "set-input-mode-hankaku-katakana";
-        "A-j" = null;
+        "A-j" = "set-input-mode-hiragana";
       };
     };
     katakana = {
       include = [ "default/katakana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = "commit";
+        "C-j" = null;
         "A-q" = "set-input-mode-hankaku-katakana";
-        "A-j" = null;
+        "A-j" = "set-input-mode-hiragana";
       };
     };
     hankaku-katakana = {
       include = [ "default/hankaku-katakana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = "commit";
+        "C-j" = null;
         "A-q" = "set-input-mode-hiragana";
-        "A-j" = null;
+        "A-j" = "set-input-mode-hiragana";
       };
     };
     latin = {
       include = [ "default/latin" ];
       define.keymap = {
-        "C-j" = "set-input-mode-hiragana";
-        "A-j" = null;
+        "C-j" = null;
+        "A-j" = "set-input-mode-hiragana";
       };
     };
     wide-latin = {
       include = [ "default/wide-latin" ];
       define.keymap = {
-        "C-j" = "set-input-mode-hiragana";
-        "A-j" = null;
+        "C-j" = null;
+        "A-j" = "set-input-mode-hiragana";
       };
     };
   };
