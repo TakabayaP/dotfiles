@@ -21,6 +21,15 @@ let
     slackEscape = {
       isEnabled = true;
     };
+    copyPaste = {
+      isEnabled = true;
+    };
+    terminalModifierSwap = {
+      isEnabled = true;
+    };
+    commandShortcuts = {
+      disableHide = true;
+    };
   });
 
   installedApp = "${config.home.homeDirectory}/Applications/Keykun.app";

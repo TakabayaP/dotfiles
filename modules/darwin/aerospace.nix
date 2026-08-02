@@ -2,7 +2,20 @@
 let
   tomlFormat = pkgs.formats.toml { };
   aerospaceConfig = {
+    config-version = 2;
     start-at-login = true;
+    persistent-workspaces = [
+      "1"
+      "2"
+      "3"
+      "4"
+      "5"
+      "6"
+      "7"
+      "8"
+      "9"
+      "10"
+    ];
 
     automatically-unhide-macos-hidden-apps = false;
     enable-normalization-flatten-containers = false;
@@ -44,6 +57,7 @@ let
 
     on-window-detected = [
       {
+        "if" = "true";
         run = "layout tiling";
       }
     ];
@@ -53,7 +67,10 @@ let
     mode.main.binding = {
       cmd-m = [ ];
 
-      alt-enter = "exec-and-forget /usr/bin/open -na /Applications/Alacritty.app";
+      # Kitty launched from a Herdr pane would otherwise inherit HERDR_ENV and
+      # be treated as another Herdr instance. Start it with the Herdr runtime
+      # variables removed so it remains an outer terminal.
+      alt-enter = "exec-and-forget /usr/bin/env -u HERDR_ENV -u HERDR_SOCKET_PATH -u HERDR_BIN_PATH -u HERDR_STARTUP_CWD -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID -u HERDR_PANE_ID /usr/bin/open -na /Applications/kitty.app";
 
       alt-h = "focus --boundaries all-monitors-outer-frame left";
       alt-j = "focus --boundaries all-monitors-outer-frame down";

@@ -286,6 +286,6 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 })
 
 vim.keymap.set("n", "<leader>ff", cached_find_files, { desc = "Find Files" })
-vim.keymap.set("n", "<F13>", cached_find_files, { desc = "Find Files (Cmd+P)" })
+vim.keymap.set("n", "<F13>", cached_find_files, { desc = "Find Files (Ctrl+P)" })
 
 return M

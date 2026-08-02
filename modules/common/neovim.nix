@@ -289,11 +289,87 @@
 
     plugins.render-markdown = {
       enable = true;
+      settings = {
+        # Keep source visible while editing, as in the referenced setup.
+        render_modes = [ "n" "c" ];
+        heading.enabled = false;
+        link.enabled = false;
+        pipe_table.enabled = true;
+        # Snacks owns Mermaid rendering. render-markdown's code-block conceal
+        # hides its Kitty unicode placeholders in Normal mode.
+        code.disable = [ "mermaid" ];
+      };
+    };
+
+    plugins.image = {
+      enable = true;
+      settings = {
+        backend = "kitty";
+        processor = "magick_cli";
+        integrations = {
+          markdown = {
+            enabled = true;
+            clear_in_insert_mode = true;
+            only_render_image_at_cursor = false;
+            floating_windows = false;
+            filetypes = [ "markdown" ];
+          };
+          asciidoc.enabled = false;
+          css.enabled = false;
+          html.enabled = false;
+          neorg.enabled = false;
+          org.enabled = false;
+          rst.enabled = false;
+          syslang.enabled = false;
+          typst.enabled = false;
+        };
+        max_height_window_percentage = 50;
+        # This setup is for images embedded in Markdown, not opening image files
+        # as Neovim buffers.
+        hijack_file_patterns.__raw = "{}";
+      };
     };
 
     plugins.snacks = {
       enable = true;
       settings = {
+        image = {
+          enabled = true;
+          # Keep high-resolution conversions separate from the old cache,
+          # since Snacks cache keys do not include converter arguments.
+          cache.__raw = "vim.fn.stdpath('cache') .. '/snacks/image-1200x2'";
+          # Mermaid rendering is attached explicitly only to Markdown files in
+          # Git repositories. Do not hijack standalone image buffers.
+          formats.__raw = "{}";
+          convert = {
+            notify = true;
+            mermaid.__raw = ''
+              function()
+                local theme = vim.o.background == "light" and "neutral" or "dark"
+                return {
+                  "-i", "{src}",
+                  "-o", "{file}",
+                  "-b", "transparent",
+                  "-t", theme,
+                  "-w", "1200",
+                  "-s", "2",
+                }
+              end
+            '';
+          };
+          doc = {
+            # Keep Mermaid diagrams visible through Kitty unicode placeholders
+            # instead of showing them only while the cursor is on the block.
+            enabled = false;
+            inline = true;
+            float = false;
+            # Snacks defaults to 80x40 cells. Use twice that area so inline
+            # Markdown previews are visibly larger on wide terminal windows.
+            max_width = 160;
+            max_height = 80;
+          };
+          math.enabled = false;
+        };
         explorer = {
           enabled = true;
           replace_netrw = true;
@@ -371,13 +447,21 @@
       vim-visual-multi
     ];
 
-    extraPackages = with pkgs; [
-      fd
-      git
-      ripgrep
-      prettierd
-      lazygit
-    ];
+    extraPackages =
+      (with pkgs; [
+        fd
+        git
+        imagemagick
+        mermaid-cli
+        ripgrep
+        prettierd
+        lazygit
+      ])
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        pkgs.chromium
+        pkgs.wl-clipboard
+        pkgs.xclip
+      ];
 
     # --------------------------------------------------------------------------
     # キーバインド (宣言的)
@@ -391,22 +475,26 @@
       # 現在のwindowをzoom表示
       { mode = "n"; key = "<C-w>f"; action.__raw = "function() Snacks.zen.zoom() end"; options.desc = "Toggle window zoom"; }
 
+      # Markdown画像・Mermaidを画像専用bufferで拡大表示
+      { mode = "n"; key = "<leader>ip"; action.__raw = "function() require('custom.mermaid').preview_at_cursor() end"; options.desc = "Preview image in buffer"; }
+      { mode = "n"; key = "<leader>ic"; action.__raw = "function() require('custom.mermaid').copy_at_cursor() end"; options.desc = "Copy image to clipboard"; }
+
       # ジャンプ履歴
       { mode = "n"; key = "<leader>["; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る"; }
       { mode = "n"; key = "<leader>]"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む"; }
-      { mode = "n"; key = "<F16>"; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る (Cmd+[)"; }
-      { mode = "n"; key = "<F17>"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む (Cmd+])"; }
+      { mode = "n"; key = "<F16>"; action = "<C-o>"; options.desc = "ジャンプ履歴: 戻る (Ctrl+[)"; }
+      { mode = "n"; key = "<F17>"; action = "<C-i>"; options.desc = "ジャンプ履歴: 進む (Ctrl+])"; }
 
-      # 保存 (Cmd+S)
-      { mode = [ "n" "i" ]; key = "<F18>"; action = "<cmd>w<cr>"; options.desc = "保存 (Cmd+S)"; }
+      # 保存 (Ctrl+S)
+      { mode = [ "n" "i" ]; key = "<F18>"; action = "<cmd>w<cr>"; options.desc = "保存 (Ctrl+S)"; }
 
-      # コメントアウト (Cmd+/)
-      { mode = "n"; key = "<F20>"; action = "gcc"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
-      { mode = "v"; key = "<F20>"; action = "gc"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
-      { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Cmd+/)"; remap = true; }; }
+      # コメントアウト (Ctrl+/)
+      { mode = "n"; key = "<F20>"; action = "gcc"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
+      { mode = "v"; key = "<F20>"; action = "gc"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
+      { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
 
       # ターミナル
-      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Cmd+J)"; }
+      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Ctrl+J)"; }
       { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "Window nav from terminal"; }
 
       # ファイル検索 (Telescope)
@@ -490,7 +578,7 @@
 
       # コードリンクコピー
       {
-        mode = "n"; key = "<F15>"; options.desc = "Copy code link (Cmd+L)";
+        mode = "n"; key = "<F15>"; options.desc = "Copy code link (Ctrl+L)";
         action.__raw = ''
           function()
             local filepath = vim.fn.expand('%:.')
@@ -518,17 +606,33 @@
     extraFiles = {
       "lua/custom/worktree.lua".source = ./neovim/worktree.lua;
       "lua/custom/find-files.lua".source = ./neovim/find-files.lua;
+      "lua/custom/mermaid.lua".source = ./neovim/mermaid.lua;
     };
 
     # --------------------------------------------------------------------------
     # extraConfigLua (宣言的に表現できない最小限の設定)
     # --------------------------------------------------------------------------
 
+    # Terminal capability overrides must run before plugin setup. Otherwise
+    # snacks.image can cache Herdr as a terminal without unicode placeholders.
+    extraConfigLuaPre = ''
+      if vim.env.HERDR_ENV == "1" then
+        vim.env.SNACKS_KITTY = "true"
+      end
+
+      -- Mermaid CLI uses Chromium headlessly to turn diagram source into PNG.
+      vim.env.PUPPETEER_EXECUTABLE_PATH = ${
+        if pkgs.stdenv.isDarwin
+        then ''"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"''
+        else ''"${pkgs.chromium}/bin/chromium"''
+      }
+    '';
+
     extraConfigLua = ''
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
 
-      -- Alacritty sends Cmd shortcuts as F13-F20. Herdr preserves the underlying
+      -- The terminal sends Ctrl shortcuts as F13-F20. Herdr preserves the underlying
       -- Shift-F1..F8 identity when Neovim enables the Kitty keyboard protocol.
       -- Remap both representations to the existing F13-F20 actions.
       if vim.env.HERDR_ENV == "1" then
@@ -611,6 +715,7 @@
       -- カスタムモジュール読み込み
       require("custom.worktree")
       require("custom.find-files")
+      require("custom.mermaid")
     '';
   };
 }

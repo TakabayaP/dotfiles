@@ -1,21 +1,24 @@
 # Neovim ヘルプ・ショートカット一覧
 
+macOS では Keykun がターミナル内だけ Command と Control を交換するため、
+Caps Lock 位置を Linux と同じ Ctrl として使う。以下は交換後の論理キーで表記する。
+
 ## 保存
 
 | キー | 操作 |
 |---|---|
-| `Cmd+S` | 手動保存 |
+| `Ctrl+S` | 手動保存 |
 
-※ `autowriteall` が有効なため、バッファ切り替え時などに自動保存される。`Cmd+S` は明示的に保存したい場合に使う。
-※ Alacritty 経由で F18 に変換して動作。
+※ `autowriteall` が有効なため、バッファ切り替え時などに自動保存される。`Ctrl+S` は明示的に保存したい場合に使う。
+※ Kitty 経由で F18 に変換して動作。
 
 ## ファイル検索・コードジャンプ
 
 | キー | 操作 |
 |---|---|
-| `Cmd+P` | ファイル検索 (Git repository内のみ、キャッシュ + fs_event で自動更新) |
+| `Ctrl+P` | ファイル検索 (Git repository内のみ、キャッシュ + fs_event で自動更新) |
 | `Space` → `ff` | ファイル検索 (同上) |
-| `Cmd+Shift+F` | テキスト検索 (Git repository内のみ、Telescope live_grep) |
+| `Ctrl+Shift+F` | テキスト検索 (Git repository内のみ、Telescope live_grep) |
 | `Space` → `fg` | テキスト検索 (同上) |
 | `gd` | 定義へジャンプ（別ファイルも可） |
 | `gi` | 実装へジャンプ (implementation) |
@@ -23,15 +26,15 @@
 | `K` | ホバードキュメント表示 |
 | `<F2>` | シンボルをリネーム |
 | `Space` → `ca` | コードアクション |
-| `Cmd+[` | ジャンプ履歴: 戻る（`gd` で飛んだ後に元の場所へ） |
-| `Cmd+]` | ジャンプ履歴: 進む |
+| `Ctrl+[` | ジャンプ履歴: 戻る（`gd` で飛んだ後に元の場所へ） |
+| `Ctrl+]` | ジャンプ履歴: 進む |
 | `Space` → `[` | ジャンプ履歴: 戻る (同上) |
 | `Space` → `]` | ジャンプ履歴: 進む (同上) |
 
-※ `Cmd+P` / `Cmd+Shift+F` は Alacritty 経由で F13 / F14 に変換して動作。
-※ `Cmd+[` / `Cmd+]` は F16 / F17 に変換。
+※ `Ctrl+P` / `Ctrl+Shift+F` は Kitty 経由で F13 / F14 に変換して動作。
+※ `Ctrl+[` / `Ctrl+]` は F16 / F17 に変換。
 ※ Herdr 内では Kitty keyboard protocol により Shift+F1〜F8 として届くため、
-  F13〜F20 へ自動変換して同じ Cmd ショートカットを利用できる。
+  F13〜F20 へ自動変換して同じ Ctrl ショートカットを利用できる。
 ※ Git repository外では起動時のfile scan・cache構築・fs watcherを行わず、
   ファイル検索とテキスト検索も実行しない。
 
@@ -39,9 +42,9 @@
 
 | キー | 操作 |
 |---|---|
-| `Cmd+L` | ワークスペースルートからの相対パス + 行番号をクリップボードにコピー (例: `src/main.ts:42`) |
+| `Ctrl+L` | ワークスペースルートからの相対パス + 行番号をクリップボードにコピー (例: `src/main.ts:42`) |
 
-※ Alacritty 経由で F15 に変換して動作。
+※ Kitty 経由で F15 に変換して動作。
 
 ## GitHub permalink
 
@@ -53,9 +56,9 @@
 
 | キー | 操作 |
 |---|---|
-| `Cmd+/` | コメントアウト切替 (normal/insert/visual 対応) |
+| `Ctrl+/` | コメントアウト切替 (normal/insert/visual 対応) |
 
-※ Alacritty 経由で F20 に変換して動作。
+※ Kitty 経由で F20 に変換して動作。
 
 ## マルチカーソル (vim-visual-multi)
 
@@ -242,6 +245,67 @@ Treesitter の構文解析を利用して、関数・クラス・引数などを
 | Go | gofmt |
 | JS / TS / JSX / TSX / JSON / JSONC / CSS / HTML / YAML / Markdown | prettierd → prettier |
 
+## Markdownのリッチ表示・画像・Mermaid
+
+`.md` ファイルでは、Normalモード中にコードブロックなどを装飾表示する。Insertモードへ
+入ると生のMarkdownへ戻る。見出し、リンク、テーブルは元の記法を残して表示する。
+
+Markdownの画像記法は `image.nvim` によりバッファ内へインライン表示される。Insertモード
+中は画像を隠し、Normalモードへ戻ると再表示する。
+
+```markdown
+![説明](images/example.png)
+```
+
+Git repository内では、MermaidコードブロックもSnacksにより画像として表示する。
+Mermaid図はコードブロック上へ常時インライン表示されるため、カーソルを合わせる必要はない。
+Mermaidコードブロックだけは `render-markdown.nvim` の装飾対象から除外し、Snacksの画像表示を
+優先している。Markdown表や他の装飾には影響しない。
+Kitty直下と、Kitty graphicsを有効にしたHerdr内のNeovimに対応している。
+
+````markdown
+```mermaid
+flowchart LR
+  A[Markdown] --> B[Mermaid]
+  B --> C[Kitty image]
+```
+````
+
+通常画像の表示は `image.nvim`、Mermaid図の生成はローカルの `mmdc`、表示はSnacksの
+Kitty Graphics Protocol対応機能を使用する。
+`mmdc` は内部でChrome/Chromiumをheadless実行するが、ブラウザのウィンドウや別ターミナルは
+開かない。Git repository外では画像生成とcache作成を行わず、通常のMarkdownテキストとして
+表示する。
+
+画像記法またはMermaidコードブロックへカーソルを置いて `Space` → `i` → `p` を押すと、
+現在のwindowが画像専用bufferへ切り替わる。画像は縦横比を維持したままbufferの横幅いっぱいに
+表示し、高さが画面を超える場合は縦スクロールできる。ターミナルのサイズ変更にも追従する。
+プレビュー内で `q` を押すとbufferを閉じて、元のMarkdown bufferの表示位置へ戻る。
+
+Markdown内のインライン画像は最大160×80セル（Snacks既定値の2倍）で表示する。
+
+同じ位置で `Space` → `i` → `c` を押すと、表示対象をPNG画像としてOSのクリップボードへ
+コピーする。通常画像とMermaidの両方に対応している。Mermaidは1200px幅のviewportと
+2倍scaleで生成し、従来より高解像度のPNGをインライン表示・プレビュー・コピーで共有する。
+
+## Codex・Cursor CLIとの連携
+
+`nvim-mcp` はGit repository内の通常bufferを開いたNeovimだけで起動する。`$HOME` など
+Git repository外での起動や、Gitのcommit・merge・rebase用の一時bufferでは起動しない。
+
+同じGit repositoryをcwdとして起動したCodexまたはCursor CLIは、Neovimの未保存buffer、
+カーソル位置、LSP diagnostics、hover、definition、referencesなどをMCP経由で参照・操作
+できる。接続状態はそれぞれ次のコマンドで確認する。
+
+```bash
+codex mcp list
+cursor-agent mcp list
+```
+
+Nix設定の反映後はNeovimとCodex・Cursor CLIを再起動する。複数のNeovimを同じrepositoryで
+起動した場合は全instanceが候補になる。Cursor CLIの`nvim` serverは設定反映時に有効化
+される。
+
 ## 診断表示 (LSP)
 
 エラー・警告がエディタ内に下線とテキストで表示される。
@@ -291,11 +355,11 @@ JS は JSDoc 形式、TS は TSDoc 形式で出力される。
 
 | キー | 操作 |
 |---|---|
-| `Cmd+J` | ターミナルの表示 / 非表示を切替 |
+| `Ctrl+J` | ターミナルの表示 / 非表示を切替 |
 | `Ctrl+w` → `k` | ターミナルからエディタに戻る |
 | `Ctrl+w` → `j` | エディタからターミナルに移動 |
 
-※ ターミナル内では通常のシェル操作が可能。Alacritty 経由で F19 に変換して動作。
+※ ターミナル内では通常のシェル操作が可能。Kitty 経由で F19 に変換して動作。
 
 ## ステータスライン (lualine)
 
@@ -363,19 +427,19 @@ vscode.nvim (dark) を使用。背景は透過設定。
 
 ## 必要環境
 
-- **フォント**: Hack Nerd Font Mono (Alacritty で設定済み)
+- **フォント**: Hack Nerd Font Mono (Kitty で設定済み)
 - **lazygit**: Nix (extraPackages) で管理
 - **fd / ripgrep**: Nix (extraPackages) で管理
 
-## Alacritty キーマッピング一覧
+## Kitty キーマッピング一覧
 
-| Mac ショートカット | 変換先 | 用途 |
+| 共通ショートカット | 変換先 | 用途 |
 |---|---|---|
-| `Cmd+P` | F13 | ファイル検索 |
-| `Cmd+Shift+F` | F14 | テキスト検索 |
-| `Cmd+L` | F15 | コードリンクコピー |
-| `Cmd+[` | F16 | ジャンプ履歴: 戻る |
-| `Cmd+]` | F17 | ジャンプ履歴: 進む |
-| `Cmd+S` | F18 | 保存 |
-| `Cmd+J` | F19 | ターミナル切替 |
-| `Cmd+/` | F20 | コメントアウト切替 |
+| `Ctrl+P` | F13 | ファイル検索 |
+| `Ctrl+Shift+F` | F14 | テキスト検索 |
+| `Ctrl+L` | F15 | コードリンクコピー |
+| `Ctrl+[` | F16 | ジャンプ履歴: 戻る |
+| `Ctrl+]` | F17 | ジャンプ履歴: 進む |
+| `Ctrl+S` | F18 | 保存 |
+| `Ctrl+J` | F19 | ターミナル切替 |
+| `Ctrl+/` | F20 | コメントアウト切替 |
