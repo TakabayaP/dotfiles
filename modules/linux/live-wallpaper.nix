@@ -2,6 +2,7 @@
 let
   defaultVideo = "${config.home.homeDirectory}/Videos/live-wallpaper.mp4";
   optimizedDownloadsVideo = "${config.home.homeDirectory}/Downloads/live_wallpaper_4k_60fps_quarter_speed.mp4";
+  optimizedLowResDownloadsVideo = "${config.home.homeDirectory}/Downloads/live_wallpaper_1080p_60fps_quarter_speed.mp4";
   downloadsVideo = "${config.home.homeDirectory}/Downloads/live_wallpaper.mov";
 
   linuxLiveWallpaper = pkgs.writeShellApplication {
@@ -28,7 +29,7 @@ let
       fi
 
       if [ -z "$video" ] || [ ! -f "$video" ]; then
-        echo "linux-live-wallpaper: video not found; add ${defaultVideo}, ${optimizedDownloadsVideo}, ${downloadsVideo}, or set LIVE_WALLPAPER_VIDEO" >&2
+        echo "linux-live-wallpaper: video not found; add ${defaultVideo}, ${optimizedDownloadsVideo}, ${optimizedLowResDownloadsVideo}, ${downloadsVideo}, or set LIVE_WALLPAPER_VIDEO" >&2
         exit 0
       fi
 
@@ -68,8 +69,17 @@ let
       fi
 
       for geometry in "''${monitor_geometries[@]}"; do
+        monitor_video="$video"
+        monitor_size="''${geometry%%+*}"
+        monitor_width="''${monitor_size%x*}"
+        monitor_height="''${monitor_size#*x}"
+        if [ "$monitor_width" -lt 3000 ] && [ "$monitor_height" -lt 3000 ] \
+          && [ -f "${optimizedLowResDownloadsVideo}" ]; then
+          monitor_video="${optimizedLowResDownloadsVideo}"
+        fi
+
         xwinwrap -g "$geometry" -st -sp -ni -b -nf -ov -- \
-          mpv -wid WID --vo=x11 "''${mpv_options[@]}" "$video" &
+          mpv -wid WID --vo=x11 "''${mpv_options[@]}" "$monitor_video" &
       done
       wait
     '';
