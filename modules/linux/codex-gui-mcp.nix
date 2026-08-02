@@ -74,6 +74,7 @@ in
 
   home.activation.syncCodexGuiMcp =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD ${syncCodexGuiMcp}/bin/sync-codex-gui-mcp
+      PATH="${pkgs.nodejs}/bin:$PATH" \
+        $DRY_RUN_CMD ${syncCodexGuiMcp}/bin/sync-codex-gui-mcp
     '';
 }
