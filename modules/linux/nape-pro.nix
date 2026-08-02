@@ -32,7 +32,8 @@ let
       disabler_pid="$!"
 
       backend_args=()
-      if [ "''${NAPE_INVERT_SCROLL:-1}" = "1" ]; then
+      # Traditional scrolling is the default on both macOS and Linux.
+      if [ "''${NAPE_INVERT_SCROLL:-0}" = "1" ]; then
         backend_args+=(--invert-scroll)
       fi
 
