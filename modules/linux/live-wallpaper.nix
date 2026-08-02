@@ -7,12 +7,7 @@ let
 
   linuxLiveWallpaper = pkgs.writeShellApplication {
     name = "linux-live-wallpaper";
-    runtimeInputs = [
-      pkgs.coreutils
-      pkgs.gnused
-      pkgs.xwinwrap
-      pkgs.xrandr
-    ];
+    runtimeInputs = [ pkgs.xwinwrap ];
     text = ''
       video="''${LIVE_WALLPAPER_VIDEO:-}"
 
@@ -57,62 +52,11 @@ let
         --hwdec=nvdec
       )
 
-      # i3 uses X11 on this host. Start one override-redirect background per
-      # monitor so landscape and portrait displays each get a fully covered
-      # canvas. The below/sticky flags keep them behind normal windows.
-      mapfile -t monitor_geometries < <(
-        xrandr --query 2>/dev/null \
-          | sed -nE 's/^[^ ]+ connected.* ([0-9]+x[0-9]+\+[0-9]+\+[0-9]+)( .*)$/\1/p'
-      )
-
-      if [ "''${#monitor_geometries[@]}" -eq 0 ]; then
-        # Keep a useful fallback for X11 sessions without xrandr output.
-        exec xwinwrap -fs -st -sp -ni -b -nf -ov -- \
-          /usr/bin/mpv -wid WID "''${mpv_options[@]}" "$video"
-      fi
-
-      pids=()
-      # Invoked indirectly by the EXIT trap below.
-      # shellcheck disable=SC2329
-      cleanup_children() {
-        local exit_status="$?"
-        trap - EXIT INT TERM
-
-        for pid in "''${pids[@]}"; do
-          kill "$pid" >/dev/null 2>&1 || true
-        done
-        for pid in "''${pids[@]}"; do
-          wait "$pid" >/dev/null 2>&1 || true
-        done
-
-        exit "$exit_status"
-      }
-      trap cleanup_children EXIT
-      trap 'exit 0' INT TERM
-
-      for geometry in "''${monitor_geometries[@]}"; do
-        monitor_video="$video"
-        monitor_size="''${geometry%%+*}"
-        monitor_width="''${monitor_size%x*}"
-        monitor_height="''${monitor_size#*x}"
-        if [ "$monitor_width" -lt 3000 ] && [ "$monitor_height" -lt 3000 ] \
-          && [ -f "${optimizedLowResDownloadsVideo}" ]; then
-          monitor_video="${optimizedLowResDownloadsVideo}"
-        fi
-
-        xwinwrap -g "$geometry" -st -sp -ni -b -nf -ov -- \
-          /usr/bin/mpv -wid WID "''${mpv_options[@]}" "$monitor_video" &
-        pids+=("$!")
-      done
-
-      if wait -n "''${pids[@]}"; then
-        echo "linux-live-wallpaper: an xwinwrap child exited unexpectedly" >&2
-        exit 1
-      else
-        child_status="$?"
-        echo "linux-live-wallpaper: an xwinwrap child exited with status $child_status" >&2
-        exit "$child_status"
-      fi
+      # X11 exposes the complete multi-monitor layout as one root canvas.
+      # Rendering once across that canvas makes each monitor show its own
+      # section of one continuous video while decoding the stream only once.
+      exec xwinwrap -fs -st -sp -ni -b -nf -ov -- \
+        /usr/bin/mpv -wid WID "''${mpv_options[@]}" "$video"
     '';
   };
 in
