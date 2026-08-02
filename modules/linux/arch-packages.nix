@@ -1,7 +1,9 @@
 { lib, pkgs, ... }:
 let
   archPackages = [
-    # Host-side mpv shares Arch's glibc and NVIDIA runtime with the driver.
+    # Host-side GUI programs share Arch's glibc and graphics runtime with the
+    # installed driver.
+    "kitty"
     "mpv"
   ];
 
