@@ -17,10 +17,18 @@ let
         exit 0
       fi
 
-      mpv_options="--no-audio --loop-file=inf --no-osc --no-input-default-bindings --really-quiet --hwdec=auto"
+      mpv_options=(
+        --no-audio
+        --loop-file=inf
+        --no-osc
+        --no-input-default-bindings
+        --really-quiet
+        --hwdec=auto
+      )
+      mpvpaper_options="''${mpv_options[*]}"
 
       if [ -n "''${WAYLAND_DISPLAY:-}" ]; then
-        exec mpvpaper -o "$mpv_options" '*' "$video"
+        exec mpvpaper -o "$mpvpaper_options" '*' "$video"
       fi
 
       if [ -z "''${DISPLAY:-}" ]; then
@@ -32,7 +40,7 @@ let
       # sticky across workspaces, and outside task switching.
       # WID is supplied by xwinwrap to mpv for the embedded desktop window.
       exec xwinwrap -fs -fdt -ni -b -nf -- \
-        mpv --wid=WID $mpv_options "$video"
+        mpv --wid=WID "''${mpv_options[@]}" "$video"
     '';
   };
 in
