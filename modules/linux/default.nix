@@ -36,6 +36,7 @@ in
     ./codex-gui-mcp.nix
     ./nape-pro.nix
     ./waybar.nix
+    ./live-wallpaper.nix
   ];
 
   home.packages = [
