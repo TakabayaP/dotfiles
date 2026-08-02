@@ -29,6 +29,13 @@
     };
   };
 
+  # Migrate the old global Git default so the first push of a new local branch
+  # automatically configures its upstream remote.
+  programs.git = {
+    enable = true;
+    extraConfig.push.autoSetupRemote = true;
+  };
+
   home.sessionVariables = {
     EDITOR = "nvim";
     TERMINAL = "kitty";

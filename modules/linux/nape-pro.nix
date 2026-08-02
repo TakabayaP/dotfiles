@@ -50,15 +50,29 @@ let
     '';
   };
 
-  napeNaturalScroll = pkgs.writeShellApplication {
-    name = "nape-natural-scroll";
+  napePointerSettings = pkgs.writeShellApplication {
+    name = "nape-pointer-settings";
     runtimeInputs = [ pkgs.xinput ];
     text = ''
+      physical_device="Keychron Nape Pro Mouse"
+      virtual_device="Nape Pro userspace mouse"
+
       while true; do
-        xinput set-prop \
-          "Keychron Nape Pro Mouse" \
-          "libinput Natural Scrolling Enabled" 1 \
-          >/dev/null 2>&1 || true
+        for device in "$physical_device" "$virtual_device"; do
+          # Match macOS's com.apple.mouse.scaling=-1: linear, unaccelerated
+          # pointer motion with the hardware DPI left unchanged.
+          xinput set-prop "$device" \
+            "libinput Accel Profile Enabled" 0 1 \
+            >/dev/null 2>&1 || true
+          xinput set-prop "$device" \
+            "libinput Accel Speed" 0 \
+            >/dev/null 2>&1 || true
+
+          # Use traditional scrolling on both the physical and virtual device.
+          xinput set-prop "$device" \
+            "libinput Natural Scrolling Enabled" 0 \
+            >/dev/null 2>&1 || true
+        done
         sleep 2
       done
     '';
@@ -66,20 +80,20 @@ let
 in
 {
   home.packages = [
-    napeNaturalScroll
+    napePointerSettings
     napeUserspaceMouseWrapper
   ];
 
-  systemd.user.services.nape-natural-scroll = {
+  systemd.user.services.nape-pointer-settings = {
     Unit = {
-      Description = "Enable natural scrolling for Nape Pro Bluetooth mouse";
+      Description = "Match macOS pointer settings for Nape Pro mouse";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
     };
 
     Service = {
       Type = "simple";
-      ExecStart = "${napeNaturalScroll}/bin/nape-natural-scroll";
+      ExecStart = "${napePointerSettings}/bin/nape-pointer-settings";
       Restart = "on-failure";
       RestartSec = "2s";
     };
