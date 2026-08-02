@@ -132,8 +132,8 @@ in
     CustomUserPreferences = {
       ".GlobalPreferences"."com.apple.mouse.scaling" = lib.mkForce (-1);
 
-      # macSKK handles this only while its input source is active. Keeping it
-      # here avoids a machine-wide Cmd+J rewrite in Keykun.
+      # macSKK handles this only while its input source is active. Use Option+J
+      # as the SKK-local Hiragana reset and leave Ctrl+J available to apps.
       "net.mtgto.inputmethod.macSKK" = {
         selectedKeyBindingSetId = "dotfiles";
         keyBindingSets = [
@@ -146,8 +146,8 @@ in
                 inputs = [
                   {
                     key = "j";
-                    # NSEvent.ModifierFlags.command.rawValue
-                    modifierFlags = 1048576;
+                    # NSEvent.ModifierFlags.option.rawValue
+                    modifierFlags = 524288;
                     optionalModifierFlags = 0;
                   }
                 ];
