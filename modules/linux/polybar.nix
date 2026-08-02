@@ -35,46 +35,6 @@ let
     '';
   };
 
-  fcitxStatus = pkgs.writeShellApplication {
-    name = "polybar-ime";
-    runtimeInputs = [
-      pkgs.coreutils
-      pkgs.qt6Packages.fcitx5-with-addons
-    ];
-    text = ''
-      while true; do
-        input_name="$(fcitx5-remote -n 2>/dev/null || true)"
-        input_name="$(printf '%s' "$input_name" | tr '[:upper:]' '[:lower:]')"
-
-        case "$input_name" in
-          *skk*|*hiragana*)
-            icon="あ"
-            label="JA"
-            ;;
-          *katakana*)
-            icon="ア"
-            label="JA"
-            ;;
-          *hangul*|*korean*)
-            icon="한"
-            label="KO"
-            ;;
-          *chinese*|*pinyin*)
-            icon="中"
-            label="ZH"
-            ;;
-          *)
-            icon="A"
-            label="EN"
-            ;;
-        esac
-
-        printf 'IME %s %s\n' "$icon" "$label"
-        sleep 1
-      done
-    '';
-  };
-
   cpuStatus = pkgs.writeShellApplication {
     name = "polybar-cpu";
     runtimeInputs = [
@@ -318,7 +278,7 @@ let
     font-0 = Hack Nerd Font:style=Regular:size=9;1
     font-1 = Hack Nerd Font:style=Bold:size=9;1
     modules-left = workspaces
-    modules-right = ${if tray then "tray " else ""}cpu memory vram ime live-wallpaper pulseaudio battery date
+    modules-right = ${if tray then "tray " else ""}cpu memory vram live-wallpaper pulseaudio battery date
     wm-restack = i3
     enable-ipc = true
     cursor-click = pointer
@@ -347,16 +307,6 @@ let
     interval = 30
     format = <label>
     format-background = ''${colors.module-background}
-    format-padding = 0
-    label = %output%
-
-    [module/ime]
-    type = custom/script
-    exec = ${fcitxStatus}/bin/polybar-ime
-    tail = true
-    format = <label>
-    format-background = ''${colors.module-background}
-    format-foreground = ''${colors.accent}
     format-padding = 0
     label = %output%
 
