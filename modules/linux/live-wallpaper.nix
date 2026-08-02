@@ -48,7 +48,7 @@ let
       # i3 uses X11 on this host. xwinwrap keeps mpv below normal windows,
       # sticky across workspaces, and outside task switching.
       # WID is supplied by xwinwrap to mpv for the embedded desktop window.
-      exec xwinwrap -fs -fdt -ni -b -nf -- \
+      exec xwinwrap -fs -st -sp -ni -b -nf -- \
         mpv --wid=WID "''${mpv_options[@]}" "$video"
     '';
   };
