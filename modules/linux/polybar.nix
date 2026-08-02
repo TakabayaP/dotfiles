@@ -302,24 +302,23 @@ let
 
     [bar/sketchybar]
     width = 100%
-    height = 28
+    height = 22
     monitor = ''${env:MONITOR:}
-    offset-x = 4
-    offset-y = 4
-    radius = 4
+    offset-x = 3
+    offset-y = 3
+    radius = 3
     fixed-center = true
     background = ''${colors.background}
     foreground = ''${colors.foreground}
     line-size = 0
     border-size = 0
-    padding-left = 4
-    padding-right = 4
+    padding-left = 3
+    padding-right = 3
     module-margin = 1
-    font-0 = Hack Nerd Font:style=Regular:size=11;2
-    font-1 = Hack Nerd Font:style=Bold:size=11;2
+    font-0 = Hack Nerd Font:style=Regular:size=9;1
+    font-1 = Hack Nerd Font:style=Bold:size=9;1
     modules-left = workspaces
-    modules-center = date
-    modules-right = battery ime live-wallpaper pulseaudio cpu memory vram${if tray then " tray" else ""}
+    modules-right = ${if tray then "tray " else ""}cpu memory vram ime live-wallpaper pulseaudio battery date
     wm-restack = i3
     enable-ipc = true
     cursor-click = pointer
@@ -396,8 +395,8 @@ let
     format = <tray>
     format-background = ''${colors.module-background}
     format-padding = 0
-    tray-spacing = 4px
-    tray-size = 100%
+    tray-spacing = 2px
+    tray-size = 75%
 
     [module/cpu]
     type = custom/script
