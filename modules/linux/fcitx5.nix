@@ -33,41 +33,41 @@ let
       include = [ "default/hiragana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = null;
+        "C-j" = "commit";
         "A-q" = "set-input-mode-hankaku-katakana";
-        "A-j" = "commit";
+        "A-j" = null;
       };
     };
     katakana = {
       include = [ "default/katakana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = null;
+        "C-j" = "commit";
         "A-q" = "set-input-mode-hankaku-katakana";
-        "A-j" = "commit";
+        "A-j" = null;
       };
     };
     hankaku-katakana = {
       include = [ "default/hankaku-katakana" ];
       define.keymap = {
         "C-q" = null;
-        "C-j" = null;
+        "C-j" = "commit";
         "A-q" = "set-input-mode-hiragana";
-        "A-j" = "commit";
+        "A-j" = null;
       };
     };
     latin = {
       include = [ "default/latin" ];
       define.keymap = {
-        "C-j" = null;
-        "A-j" = "set-input-mode-hiragana";
+        "C-j" = "set-input-mode-hiragana";
+        "A-j" = null;
       };
     };
     wide-latin = {
       include = [ "default/wide-latin" ];
       define.keymap = {
-        "C-j" = null;
-        "A-j" = "set-input-mode-hiragana";
+        "C-j" = "set-input-mode-hiragana";
+        "A-j" = null;
       };
     };
   };
