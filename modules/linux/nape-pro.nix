@@ -55,25 +55,45 @@ let
     name = "nape-pointer-settings";
     runtimeInputs = [ pkgs.xinput ];
     text = ''
-      physical_device="Keychron Nape Pro Mouse"
-      virtual_device="Nape Pro userspace mouse"
+      device="Nape Pro userspace mouse"
+      configured_device_id=""
+
+      configure_device() {
+        local device_name="$1"
+        local device_id="$2"
+
+        echo "nape-pointer-settings: configuring $device_name (id $device_id)"
+
+        # Match macOS's com.apple.mouse.scaling=-1: linear, unaccelerated
+        # pointer motion with the hardware DPI left unchanged.
+        if ! xinput set-prop "$device_id" \
+          "libinput Accel Profile Enabled" 0 1 0; then
+          echo "nape-pointer-settings: failed to set acceleration profile for $device_name (id $device_id)" >&2
+          return 1
+        fi
+        if ! xinput set-prop "$device_id" \
+          "libinput Accel Speed" 0; then
+          echo "nape-pointer-settings: failed to set acceleration speed for $device_name (id $device_id)" >&2
+          return 1
+        fi
+
+        # Use traditional scrolling.
+        if ! xinput set-prop "$device_id" \
+          "libinput Natural Scrolling Enabled" 0; then
+          echo "nape-pointer-settings: failed to set natural scrolling for $device_name (id $device_id)" >&2
+          return 1
+        fi
+      }
 
       while true; do
-        for device in "$physical_device" "$virtual_device"; do
-          # Match macOS's com.apple.mouse.scaling=-1: linear, unaccelerated
-          # pointer motion with the hardware DPI left unchanged.
-          xinput set-prop "$device" \
-            "libinput Accel Profile Enabled" 0 1 \
-            >/dev/null 2>&1 || true
-          xinput set-prop "$device" \
-            "libinput Accel Speed" 0 \
-            >/dev/null 2>&1 || true
+        device_id="$(xinput list --id-only "$device" 2>/dev/null || true)"
+        if [ -z "$device_id" ]; then
+          configured_device_id=""
+        elif [ "$configured_device_id" != "$device_id" ]; then
+          configure_device "$device" "$device_id" || exit 1
+          configured_device_id="$device_id"
+        fi
 
-          # Use traditional scrolling on both the physical and virtual device.
-          xinput set-prop "$device" \
-            "libinput Natural Scrolling Enabled" 0 \
-            >/dev/null 2>&1 || true
-        done
         sleep 2
       done
     '';
