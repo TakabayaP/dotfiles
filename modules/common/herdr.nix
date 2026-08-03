@@ -9,9 +9,10 @@ let
     exec ${herdrPackage}/bin/herdr "$@"
   '';
   heldPrefixModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
-  # Keykun keeps the J key event unchanged so macSKK can receive Ctrl-J in
-  # terminal sessions. While the prefix modifier is held, Herdr therefore
-  # needs a Control-J alias in addition to the existing Command-J alias.
+  # Keykun keeps J unchanged when macOS reports Control so macSKK can receive
+  # Ctrl-J in terminal sessions. Command-origin J still swaps for Kitty's
+  # Neovim F19 shortcut. While the prefix modifier is held, Herdr accepts the
+  # Control-J form in addition to the existing Command-J alias.
   focusPaneDownExtra = lib.optionalString pkgs.stdenv.isDarwin ", \"prefix+ctrl+j\"";
 in
 {
