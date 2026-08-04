@@ -132,8 +132,9 @@ in
     CustomUserPreferences = {
       ".GlobalPreferences"."com.apple.mouse.scaling" = lib.mkForce (-1);
 
-      # macSKK handles this only while its input source is active. Keep the
-      # macOS-native Ctrl+J Hiragana reset local to SKK.
+      # macSKK handles this only while its input source is active. The
+      # physical Command key is mapped to Control by macOS, so use Control+J
+      # for the Hiragana reset. Caps Lock (mapped to Command) is not matched.
       "net.mtgto.inputmethod.macSKK" = {
         selectedKeyBindingSetId = "dotfiles";
         keyBindingSets = [
