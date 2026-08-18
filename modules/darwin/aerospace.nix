@@ -26,12 +26,7 @@ let
 
     gaps = {
       outer.top = [
-        { monitor = { "BenQ GW2480" = 38; }; }
-        { monitor = { "BenQ GW2480.*1" = 38; }; }
-        { monitor = { "BenQ GW2480.*2" = 38; }; }
-        { monitor = { "LG HDR 4K" = 38; }; }
-        { monitor = { "LG HDR WQHD" = 38; }; }
-        { monitor = { "LG UltraFine" = 38; }; } 
+        { monitor = { "^(?!Built-in).*$" = 38; }; }
         0
       ];
     };
@@ -47,7 +42,7 @@ let
         if ! mkdir "$LOCK_DIR" 2>/dev/null; then
           exit 0
         fi
-        trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
+
         sleep 0.05
         F=$(cat "$STATE_DIR/focused")
         P=$(cat "$STATE_DIR/prev")
@@ -133,14 +128,14 @@ let
 
     workspace-to-monitor-force-assignment = {
       "1" = 1;
-      "2" = [ 2 1 ];
-      "3" = [ 3 2 1 ];
-      "4" = [ "2480.*1" 2 ];
-      "5" = [ "2480.*2" 1 ];
-      "6" = [ 3 2 1 ];
+      "2" = [ ".*iPhone.*" 2 1 ];
+      "3" = [ ".*iPhone.*" 3 2 1 ];
+      "4" = [ ".*iPhone.*" "2480.*1" 2 ];
+      "5" = [ ".*iPhone.*" "2480.*2" 1 ];
+      "6" = [ ".*iPhone.*" 3 2 1 ];
       "7" = 1;
-      "8" = [ 2 1 ];
-      "9" = [ 3 1 ];
+      "8" = [ ".*iPhone.*" 2 1 ];
+      "9" = [ ".*iPhone.*" 3 1 ];
       "10" = [ "2480.*1" 1 ];
     };
   };
