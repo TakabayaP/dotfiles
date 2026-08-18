@@ -494,7 +494,7 @@
       { mode = "i"; key = "<F20>"; action = "<Esc>gcca"; options = { desc = "コメントアウト切替 (Ctrl+/)"; remap = true; }; }
 
       # ターミナル
-      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (Ctrl+J)"; }
+      { mode = [ "n" "t" "i" ]; key = "<F19>"; action.__raw = "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal (physical Caps Lock+J on macOS)"; }
       { mode = "t"; key = "<C-w>"; action = "<C-\\><C-n><C-w>"; options.desc = "Window nav from terminal"; }
 
       # ファイル検索 (Telescope)
