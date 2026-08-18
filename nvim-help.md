@@ -349,13 +349,17 @@ Nix設定の反映後はNeovimとCodex・Cursor CLIを再起動する。複数�
 
 JS は JSDoc 形式、TS は TSDoc 形式で出力される。
 
+macOS では OS が Caps Lock を Command、物理 Command を Control に割り当て、Keykun が
+ターミナル内だけ Command / Control を交換する。以下の J キー表記は **物理キー** 基準。
+
 ## ターミナル (Snacks terminal)
 
 画面下部にターミナルを表示する。VSCode のターミナルパネルと同じ使い方。
 
-| キー | 操作 |
+| 物理キー | 操作 |
 |---|---|
-| `Ctrl+J` | ターミナルの表示 / 非表示を切替 |
+| Caps Lock + `J` | ターミナルの表示 / 非表示を切替 |
+| Command + `J` | ひらがな（macSKK） |
 | `Ctrl+w` → `k` | ターミナルからエディタに戻る |
 | `Ctrl+w` → `j` | エディタからターミナルに移動 |
 
@@ -441,5 +445,5 @@ vscode.nvim (dark) を使用。背景は透過設定。
 | `Ctrl+[` | F16 | ジャンプ履歴: 戻る |
 | `Ctrl+]` | F17 | ジャンプ履歴: 進む |
 | `Ctrl+S` | F18 | 保存 |
-| `Ctrl+J` | F19 | ターミナル切替 |
+| `Ctrl+J` | F19 | ターミナル切替（物理 Caps Lock + J） |
 | `Ctrl+/` | F20 | コメントアウト切替 |
