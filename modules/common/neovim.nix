@@ -607,6 +607,11 @@
       "lua/custom/worktree.lua".source = ./neovim/worktree.lua;
       "lua/custom/find-files.lua".source = ./neovim/find-files.lua;
       "lua/custom/mermaid.lua".source = ./neovim/mermaid.lua;
+      # Overlay used only by lazygit.nvim so `e` opens in the parent Neovim.
+      "lazygit-nvim-remote.yml".text = ''
+        os:
+          editPreset: "nvim-remote"
+      '';
     };
 
     # --------------------------------------------------------------------------
@@ -631,6 +636,28 @@
     extraConfigLua = ''
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
+
+      -- lazygit.nvim: `e` should edit in this Neovim via $NVIM, not a nested nvim.
+      -- Standalone `lazygit` keeps its own config because this overlay is only
+      -- passed when LazyGit is launched from here.
+      vim.g.lazygit_use_custom_config_file_path = 1
+      local lazygit_overlay = vim.fn.stdpath("config") .. "/lazygit-nvim-remote.yml"
+      local lazygit_config_paths = { lazygit_overlay }
+      local xdg_config = vim.env.XDG_CONFIG_HOME
+      if xdg_config == nil or xdg_config == "" then
+        xdg_config = vim.fn.expand("~/.config")
+      end
+      local lazygit_defaults = {
+        xdg_config .. "/lazygit/config.yml",
+        vim.fn.expand("~/Library/Application Support/lazygit/config.yml"),
+      }
+      for _, path in ipairs(lazygit_defaults) do
+        if vim.fn.filereadable(path) == 1 then
+          lazygit_config_paths = { path, lazygit_overlay }
+          break
+        end
+      end
+      vim.g.lazygit_config_file_path = lazygit_config_paths
 
       -- The terminal sends Ctrl shortcuts as F13-F20. Herdr preserves the underlying
       -- Shift-F1..F8 identity when Neovim enables the Kitty keyboard protocol.
