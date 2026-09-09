@@ -170,26 +170,36 @@
     plugins.conform-nvim = {
       enable = true;
       settings = {
+        # oxfmt: use when project has .oxfmtrc.{json,jsonc}; fall back to prettierd.
+        formatters = {
+          oxfmt = {
+            require_cwd = true;
+          };
+        };
         formatters_by_ft = {
           go = [ "gofmt" ];
           javascript = {
-            __unkeyed-1 = "prettierd";
-            __unkeyed-2 = "prettier";
+            __unkeyed-1 = "oxfmt";
+            __unkeyed-2 = "prettierd";
+            __unkeyed-3 = "prettier";
             stop_after_first = true;
           };
           typescript = {
-            __unkeyed-1 = "prettierd";
-            __unkeyed-2 = "prettier";
+            __unkeyed-1 = "oxfmt";
+            __unkeyed-2 = "prettierd";
+            __unkeyed-3 = "prettier";
             stop_after_first = true;
           };
           javascriptreact = {
-            __unkeyed-1 = "prettierd";
-            __unkeyed-2 = "prettier";
+            __unkeyed-1 = "oxfmt";
+            __unkeyed-2 = "prettierd";
+            __unkeyed-3 = "prettier";
             stop_after_first = true;
           };
           typescriptreact = {
-            __unkeyed-1 = "prettierd";
-            __unkeyed-2 = "prettier";
+            __unkeyed-1 = "oxfmt";
+            __unkeyed-2 = "prettierd";
+            __unkeyed-3 = "prettier";
             stop_after_first = true;
           };
           json = {

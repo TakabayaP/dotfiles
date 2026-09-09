@@ -26,8 +26,8 @@ let
 
     gaps = {
       outer.top = [
-        { monitor = { "^(?!Built-in).*$" = 38; }; }
-        0
+        { monitor = { "built-in" = 0; }; }
+        38
       ];
     };
 
