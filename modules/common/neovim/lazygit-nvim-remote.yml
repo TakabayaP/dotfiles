@@ -1,0 +1,6 @@
+# Overlay for lazygit.nvim only. Closes the float, then edits in the parent Neovim.
+os:
+  editInTerminal: false
+  edit: 'nvim --server "$NVIM" --remote-send "<Cmd>lua require(''custom.lazygit'').edit([=[{{filename}}]=])<CR>"'
+  editAtLine: 'nvim --server "$NVIM" --remote-send "<Cmd>lua require(''custom.lazygit'').edit([=[{{filename}}]=], {{line}})<CR>"'
+  openDirInEditor: 'nvim --server "$NVIM" --remote-send "<Cmd>lua require(''custom.lazygit'').edit([=[{{dir}}]=])<CR>"'

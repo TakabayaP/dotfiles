@@ -607,11 +607,9 @@
       "lua/custom/worktree.lua".source = ./neovim/worktree.lua;
       "lua/custom/find-files.lua".source = ./neovim/find-files.lua;
       "lua/custom/mermaid.lua".source = ./neovim/mermaid.lua;
-      # Overlay used only by lazygit.nvim so `e` opens in the parent Neovim.
-      "lazygit-nvim-remote.yml".text = ''
-        os:
-          editPreset: "nvim-remote"
-      '';
+      "lua/custom/lazygit.lua".source = ./neovim/lazygit.lua;
+      # Overlay used only by lazygit.nvim so `e` closes the float and focuses the file.
+      "lazygit-nvim-remote.yml".source = ./neovim/lazygit-nvim-remote.yml;
     };
 
     # --------------------------------------------------------------------------
@@ -637,7 +635,7 @@
       vim.o.statuscolumn = '%s %{v:lnum} %{v:relnum ? v:relnum : ">"} '
       vim.opt.sessionoptions:remove('terminal')
 
-      -- lazygit.nvim: `e` should edit in this Neovim via $NVIM, not a nested nvim.
+      -- lazygit.nvim: `e` closes the float and edits in this Neovim via $NVIM.
       -- Standalone `lazygit` keeps its own config because this overlay is only
       -- passed when LazyGit is launched from here.
       vim.g.lazygit_use_custom_config_file_path = 1
@@ -743,6 +741,7 @@
       require("custom.worktree")
       require("custom.find-files")
       require("custom.mermaid")
+      require("custom.lazygit")
     '';
   };
 }

@@ -180,14 +180,14 @@ Neovim 内から git worktree の一覧表示・切替・作成・削除がで�
 | キー | 操作 |
 |---|---|
 | `Space` | ステージ/アンステージ |
-| `e` | 親の Neovim でファイルを開く |
+| `e` | LazyGit を閉じて、親の Neovim でそのファイルに移動する |
 | `c` | コミット |
 | `p` | プッシュ |
 | `P` | プル |
 | `q` | 閉じる |
 | `?` | ヘルプ |
 
-※ Neovim から開いた LazyGit では `os.editPreset = nvim-remote` のため、`e` はネストした nvim ではなく親の Neovim で開く。
+※ Neovim から開いた LazyGit では `e` がフロートを閉じ、親の Neovim でそのファイルにフォーカスする。
 
 ## セッション復元 (persistence)
 
