@@ -65,14 +65,16 @@ in
     # easy-to-reach physical chord without conflicting with i3's Mod4-Space.
     prefix = "${if pkgs.stdenv.isDarwin then "cmd+space" else "alt+space"}"
 
-    # prefix+s is used for a horizontal split, as in the tmux config.
+    # prefix+s is used for a split; keep settings on shift+s.
     settings = "prefix+shift+s"
 
     # Treat holding the physical prefix modifier through the action key as
     # equivalent to releasing it after prefix. Keykun makes that modifier
     # Command on macOS terminals; Linux uses Alt as the prefix modifier.
-    split_vertical = ["prefix+v", "prefix+${heldPrefixModifier}+v"]
-    split_horizontal = ["prefix+s", "prefix+${heldPrefixModifier}+s"]
+    #
+    # `v` stacks panes; `s` places them side by side.
+    split_vertical = ["prefix+s", "prefix+${heldPrefixModifier}+s"]
+    split_horizontal = ["prefix+v", "prefix+${heldPrefixModifier}+v"]
 
     focus_pane_left = ["prefix+h", "prefix+${heldPrefixModifier}+h"]
     focus_pane_down = ["prefix+j", "prefix+${heldPrefixModifier}+j"${focusPaneDownExtra}]
