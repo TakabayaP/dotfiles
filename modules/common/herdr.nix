@@ -8,6 +8,43 @@ let
     export SNACKS_KITTY=true
     exec ${herdrPackage}/bin/herdr "$@"
   '';
+  herdrBin = "${herdrPackage}/bin/herdr";
+  homeDir = config.home.homeDirectory;
+  # Official integrations report native session references that Herdr uses to
+  # resume agent conversations after a server restart. Install only when the
+  # agent config directory already exists so unused CLIs are left alone.
+  syncHerdrIntegrations = pkgs.writeShellScriptBin "sync-herdr-integrations" ''
+    set -euo pipefail
+
+    herdr_bin=${lib.escapeShellArg herdrBin}
+    home_dir=${lib.escapeShellArg homeDir}
+
+    install_if_present() {
+      target="$1"
+      dir="$2"
+      if [ ! -d "$dir" ]; then
+        return 0
+      fi
+      if ! "$herdr_bin" integration install "$target"; then
+        echo "sync-herdr-integrations: failed to install $target" >&2
+      fi
+    }
+
+    install_if_present pi "$home_dir/.pi/agent"
+    install_if_present omp "$home_dir/.omp/agent"
+    install_if_present claude "$home_dir/.claude"
+    install_if_present codex "$home_dir/.codex"
+    install_if_present copilot "$home_dir/.copilot"
+    install_if_present cursor "$home_dir/.cursor"
+    install_if_present devin "$home_dir/.config/devin"
+    install_if_present droid "$home_dir/.factory"
+    install_if_present kimi "$home_dir/.kimi-code"
+    install_if_present opencode "$home_dir/.config/opencode"
+    install_if_present kilo "$home_dir/.config/kilo"
+    install_if_present hermes "$home_dir/.hermes"
+    install_if_present qodercli "$home_dir/.qoder"
+    install_if_present mastracode "$home_dir/.mastracode"
+  '';
   heldPrefixModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
   # Keykun keeps J unchanged when macOS reports Control so macSKK can receive
   # Ctrl-J from the physical Command key. Command-origin J from Caps Lock still
@@ -16,7 +53,7 @@ let
   focusPaneDownExtra = lib.optionalString pkgs.stdenv.isDarwin ", \"prefix+ctrl+j\"";
 in
 {
-  home.packages = [ herdrWithNvimEditor ];
+  home.packages = [ herdrWithNvimEditor syncHerdrIntegrations ];
 
   # gh pr create --web honors GH_BROWSER directly in both desktop sessions and
   # Herdr panes.
@@ -43,6 +80,18 @@ in
       done
     '';
 
+  home.activation.installHerdrIntegrations =
+    lib.hm.dag.entryAfter [ "installHerdrSkills" "linkGeneration" ] ''
+      $DRY_RUN_CMD ${syncHerdrIntegrations}/bin/sync-herdr-integrations
+    '';
+
+  home.activation.reloadHerdrConfig =
+    lib.hm.dag.entryAfter [ "installHerdrIntegrations" ] ''
+      if ! $DRY_RUN_CMD ${herdrBin} server reload-config; then
+        echo "reloadHerdrConfig: no running Herdr server to reload" >&2
+      fi
+    '';
+
   xdg.configFile."herdr/config.toml".text = ''
     onboarding = false
 
@@ -54,9 +103,19 @@ in
     # Herdr itself is updated by changing the pinned Flake input.
     version_check = false
 
+    [session]
+    # Resume agent panes from official integration-reported session references
+    # after a Herdr server restart. Integrations are installed by
+    # sync-herdr-integrations when the matching agent config directory exists.
+    resume_agents_on_restore = true
+
     [experimental]
     # Render Kitty Graphics Protocol images emitted by applications in panes.
     kitty_graphics = true
+    # Restore recent pane screen contents after a full server restart.
+    # Saved output lives in session-history.json and can include secrets.
+    # Agent panes with native session restore skip history replay.
+    pane_history = true
 
     [keys]
     # Keykun swaps Command and Control in macOS terminal apps. Using
