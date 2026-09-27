@@ -158,6 +158,14 @@ agent の完了・入力待ち通知は Herdr 内に表示される。通知が�
 detach 後も pane のプロセスは動作し続ける。再接続は `herdr`、server と全 pane の
 停止は `herdr server stop` を使用する。
 
+server 再起動後はプロセスは残らない。レイアウトは復元し、公式 integration が
+報告した native session reference がある pane は、対応する agent の resume
+コマンドで会話を再開する。それ以外の pane は、最近の画面内容を
+`session-history.json` から履歴として復元する。integration は Home Manager
+の activation で、設定ディレクトリがある agent に対して
+`herdr integration install` する。hook を読み込ませるには agent の再起動が
+必要。
+
 ## Linux (Arch)
 
 Home Manager は Nix のパッケージとユーザー設定を管理し、Arch の pacman データベースや

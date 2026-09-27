@@ -11,10 +11,9 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-homebrew = {
-      url = "github:zhaofengli/nix-homebrew";
-      inputs.brew-src.url = "github:Homebrew/brew/6.0.13";
-    };
+    # Follow nix-homebrew's brew pin so cask DSL stays current. Aerospace's
+    # tap uses `must_succeed:` (Homebrew 6.0.16+); 6.0.13 cannot parse it.
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
